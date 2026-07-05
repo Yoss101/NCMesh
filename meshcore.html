@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeshCore Network | NC Mesh</title>
+    <link rel="stylesheet" href="./includes/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            if (window.innerWidth <= 768) {
+                const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+                dropdownToggles.forEach(toggle => {
+                    toggle.addEventListener('click', (e) => {
+                        // Block direct redirect link if mobile sub-menu drawer is collapsed
+                        e.preventDefault();
+                        const parentLi = toggle.closest('.dropdown');
+
+                        // Toggle active tracking layouts
+                        parentLi.classList.toggle('active');
+                        const targetMenu = parentLi.querySelector('.dropdown-menu');
+
+                        if (targetMenu.style.display === 'block') {
+                            targetMenu.style.display = 'none';
+                        } else {
+                            targetMenu.style.display = 'block';
+                        }
+                    });
+                });
+            }
+
+            // --- 1. Clean Scroll Reveal Effect ---
+            const observerOptions = { root: null, rootMargin: "0px", threshold: 0.1 };
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = "1";
+                        entry.target.style.transform = "translateY(0)";
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const animatedElements = document.querySelectorAll(".card, .map-placeholder, .hero-content h1, .hero-content p");
+            animatedElements.forEach(el => {
+                el.style.opacity = "0";
+                el.style.transform = "translateY(20px)";
+                el.style.transition = "opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)";
+                revealObserver.observe(el);
+            });
+
+            // --- 2. Seamless Mesh Network Canvas Engine ---
+            const heroSection = document.querySelector(".hero");
+            if (heroSection) {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                Object.assign(canvas.style, {
+                    position: "absolute", top: "0", left: "0", width: "100%", height: "100%",
+                    zIndex: "0", pointerEvents: "none"
+                });
+                heroSection.style.position = "relative";
+                heroSection.insertBefore(canvas, heroSection.firstChild);
+
+                let points = [];
+                let maxPoints = 110;
+                const maxDist = 165;
+                let mouse = { x: null, y: null, radius: 220 };
+
+                window.addEventListener("mousemove", (e) => {
+                    const rect = heroSection.getBoundingClientRect();
+                    mouse.x = e.clientX - rect.left;
+                    mouse.y = e.clientY - rect.top;
+                });
+
+                window.addEventListener("mouseleave", () => {
+                    mouse.x = null;
+                    mouse.y = null;
+                });
+
+                class MeshNode {
+                    constructor(startX, startY) {
+                        // Accepts coordinates if repositioning on screen resize boundaries
+                        this.x = startX !== undefined ? startX : Math.random() * canvas.width;
+                        this.y = startY !== undefined ? startY : Math.random() * canvas.height;
+                        this.vx = (Math.random() - 0.5) * 0.16;
+                        this.vy = (Math.random() - 0.5) * 0.16;
+                        this.baseRadius = Math.random() * 1.5 + 0.8;
+                        this.radius = this.baseRadius;
+                        this.pulseFactor = Math.random() * Math.PI;
+                        this.depth = Math.random() * 0.5 + 0.3;
+                    }
+                    update() {
+                        this.x += this.vx;
+                        this.y += this.vy;
+
+                        if (this.x < 0) this.x = canvas.width;
+                        if (this.x > canvas.width) this.x = 0;
+                        if (this.y < 0) this.y = canvas.height;
+                        if (this.y > canvas.height) this.y = 0;
+
+                        this.pulseFactor += 0.012;
+                        this.radius = this.baseRadius + Math.sin(this.pulseFactor) * 0.3;
+
+                        if (mouse.x !== null && mouse.y !== null) {
+                            const dx = mouse.x - this.x;
+                            const dy = mouse.y - this.y;
+                            const distance = Math.hypot(dx, dy);
+
+                            if (distance < mouse.radius) {
+                                const force = (mouse.radius - distance) / mouse.radius;
+                                this.x -= (dx / distance) * force * 0.35;
+                                this.y -= (dy / distance) * force * 0.35;
+                            }
+                        }
+                    }
+                    draw() {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(34, 197, 94, ${this.depth * 0.5})`;
+                        ctx.fill();
+                    }
+                }
+
+                // SMART RESIZE: Scales coordinates instead of wiping arrays
+                function resizeCanvas() {
+                    const oldWidth = canvas.width || heroSection.offsetWidth;
+                    const oldHeight = canvas.height || heroSection.offsetHeight;
+
+                    canvas.width = heroSection.offsetWidth;
+                    canvas.height = heroSection.offsetHeight;
+
+                    const targetPoints = Math.min(Math.floor((canvas.width * canvas.height) / 7500), maxPoints);
+
+                    if (points.length === 0) {
+                        // Initial generation pass on boot up
+                        for (let i = 0; i < targetPoints; i++) {
+                            points.push(new MeshNode());
+                        }
+                    } else {
+                        // Dynamically re-map current coordinate sets safely
+                        points.forEach(p => {
+                            p.x = (p.x / oldWidth) * canvas.width;
+                            p.y = (p.y / oldHeight) * canvas.height;
+                        });
+
+                        // Add or trim nodes smoothly if canvas changes significantly
+                        if (points.length < targetPoints) {
+                            while (points.length < targetPoints) points.push(new MeshNode());
+                        } else if (points.length > targetPoints) {
+                            points.splice(targetPoints);
+                        }
+                    }
+                }
+
+                window.addEventListener("resize", resizeCanvas);
+                resizeCanvas();
+
+                function animateMesh() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    for (let i = 0; i < points.length; i++) {
+                        points[i].update();
+                        points[i].draw();
+
+                        for (let j = i + 1; j < points.length; j++) {
+                            const dx = points[i].x - points[j].x;
+                            const dy = points[i].y - points[j].y;
+                            const dist = Math.hypot(dx, dy);
+
+                            if (dist < maxDist) {
+                                let alpha = (1 - dist / maxDist) * 0.13 * (points[i].depth * points[j].depth);
+
+                                if (mouse.x !== null && mouse.y !== null) {
+                                    const mDist1 = Math.hypot(mouse.x - points[i].x, mouse.y - points[i].y);
+                                    const mDist2 = Math.hypot(mouse.x - points[j].x, mouse.y - points[j].y);
+                                    if (mDist1 < mouse.radius || mDist2 < mouse.radius) {
+                                        alpha *= 2.0;
+                                    }
+                                }
+
+                                ctx.beginPath();
+                                ctx.moveTo(points[i].x, points[i].y);
+                                ctx.lineTo(points[j].x, points[j].y);
+                                ctx.strokeStyle = `rgba(34, 197, 94, ${alpha})`;
+                                ctx.lineWidth = dist < maxDist * 0.35 ? 0.8 : 0.4;
+                                ctx.stroke();
+
+                                if (Math.random() < 0.00025 && dist < maxDist * 0.6) {
+                                    ctx.beginPath();
+                                    const pct = (Date.now() % 1800) / 1800;
+                                    const px = points[i].x + dx * pct;
+                                    const py = points[i].y + dy * pct;
+                                    ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+                                    ctx.fillStyle = `rgba(34, 197, 94, ${points[i].depth})`;
+                                    ctx.fill();
+                                }
+                            }
+                        }
+                    }
+                    requestAnimationFrame(animateMesh);
+                }
+                animateMesh();
+            }
+
+            // --- 3. Simple Back-To-Top Button ---
+            const topBtn = document.createElement("button");
+            topBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+            Object.assign(topBtn.style, {
+                position: "fixed", bottom: "30px", right: "30px", width: "45px", height: "45px",
+                backgroundColor: "#1a1c1e", color: "#22c55e", border: "1px solid #2a2d31",
+                borderRadius: "50%", cursor: "pointer", display: "none", zIndex: "2000",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.4)", transition: "all 0.3s ease"
+            });
+            document.body.appendChild(topBtn);
+
+            window.addEventListener("scroll", () => {
+                topBtn.style.display = window.scrollY > 400 ? "block" : "none";
+            });
+
+            topBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+            topBtn.addEventListener("mouseenter", () => {
+                topBtn.style.backgroundColor = "rgba(34, 197, 94, 0.1)";
+                topBtn.style.borderColor = "#22c55e";
+                topBtn.style.boxShadow = "0 0 15px rgba(34, 197, 94, 0.3)";
+            });
+            topBtn.addEventListener("mouseleave", () => {
+                topBtn.style.backgroundColor = "#1a1c1e";
+                topBtn.style.borderColor = "#2a2d31";
+                topBtn.style.boxShadow = "0 4px 12px rgba(0,0,0,0.4)";
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="container">
+            <!-- Path explicitly updated to target the local directory syntax -->
+            <a href="index.html" class="logo-brand">
+                <img src="./img/ncmesh_logo.png" alt="NC Mesh Logo" class="brand-img">
+                <span class="brand-text">NC<span>Mesh.net</span></span>
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <!-- Meshtastic Dropdown Nesting Menu -->
+                    <li class="dropdown">
+                        <a href="meshtastic.html" class="dropdown-toggle">Meshtastic <i
+                                class="fa-solid fa-chevron-down nav-arrow"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="meshtastic.html"><i class="fa-solid fa-circle-info"></i> Network Info</a></li>
+                            <li><a href="config-meshtastic.html"><i class="fa-solid fa-sliders"></i> Setup Instructions</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- MeshCore Dropdown Nesting Menu -->
+                    <li class="dropdown">
+                        <a href="meshcore.html" class="dropdown-toggle">MeshCore <i
+                                class="fa-solid fa-chevron-down nav-arrow"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="meshcore.html"><i class="fa-solid fa-circle-info"></i> Network Info</a></li>
+                            <li><a href="config-meshcore.html"><i class="fa-solid fa-sliders"></i> Setup Instructions</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>MeshCore Next-Gen Routing Protocol</h1>
+            <p>A smart routing mesh built to handle point-to-point text messaging efficiently, significantly reducing network traffic congestion.</p>
+        </div>
+    </section>
+    <!-- Core Elaboration Grid Column Section -->
+    <section class="features" style="padding: 2rem 0 4rem 0;">
+        <div class="container">
+            <h2>Protocol Architecture Analysis</h2>
+            
+            <!-- Swapped to the strict 2x2 container layout -->
+            <div class="grid-2x2" style="margin-top: 1rem;">
+                
+                <!-- Card 1: 64-Hop Directed Routing Layout -->
+                <div class="card">
+                    <i class="fa-solid fa-solid fa-circle-nodes feature-icon" style="color: var(--accent-green);"></i>
+                    <h3 style="margin-bottom: 0.75rem;">64-Hop Scale Capacity</h3>
+                    <p>Unlike standard mesh systems restricted to a 3-to-5 hop threshold to avoid airwave clutter, MeshCore securely scales up to an incredible <span class="settings-value">64 Hops</span>. Because the directed-path protocol only wakes up one specific repeater at a time along the chain, messages can crawl across the entire state through small, low-altitude residential relays without generating data collisions.</p>
+                </div>
+
+                <!-- Card 2: Directed Paths -->
+                <div class="card">
+                    <i class="fa-solid fa-route feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Dynamic Directed-Paths</h3>
+                    <p>MeshCore mapping logic isolates routes to direct targets. A 64-byte payload overhead is physically reserved in the packet layer structure to explicitly map and follow a static route. Only assigned infrastructure nodes repeat the packet—leaving neighboring handheld units completely silent.</p>
+                </div>
+
+                <!-- Card 3: Stealthy Adverts -->
+                <div class="card">
+                    <i class="fa-solid fa-eye-slash feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Stealthy Adverts Matrix</h3>
+                    <p>Instead of continuously broadcasting presence pings, MeshCore nodes protect channel availability by utilizing quiet, fixed intervals for Adverts (Node Announcements). Running natively on a multi-hour basis up to a 24-hour cycle, it maps topology alterations without generating packet storms.</p>
+                </div>
+
+                <!-- Card 4: Operational Impact -->
+                <div class="card">
+                    <i class="fa-solid fa-battery-three-quarters feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Operational Grid Impact</h3>
+                    <p>By preventing client devices from wasting energy on repeating background data traffic, MeshCore client nodes only transmit when you explicitly execute a command. This keeps pocket gear alive longer in the field, while focusing critical solar node power reserves purely on high-utility infrastructure paths.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- Dedicated Protocol Map Block -->
+    <section class="map-section">
+        <div class="container">
+            <h2>Live NC MeshCore Topology Map</h2>
+            <p>Track regional companion setups, standalone repeaters, and localized line-of-sight path availability.</p>
+            <div class="map-placeholder">
+                <!-- Replace this iframe slot with your preferred map layer token tracker -->
+                 MeshCore Map
+                <iframe src="https://gso.meshmapper.net/embed.php?lat=35.777946961905194&lon=-80.18615098141781&zoom=7" style="width:100%; height:100%; border:none; border-radius:0.5rem;"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- MeshCore Node Architecture Section -->
+    <section class="features" style="padding: 4rem 0;">
+        <div class="container">
+            <h2>MeshCore Node Architecture</h2>
+            
+            <!-- Strict 2x2 layout matrix handles the 4-box configuration perfectly -->
+            <div class="grid-2x2" style="margin-top: 1rem;">
+                
+                <!-- Column 1: Companion -->
+                <div class="card">
+                    <i class="fa-solid fa-mobile-screen-button feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Companion Devices</h3>
+                    <p>Your everyday smartphone link module running the native MeshCore client layer. These handheld nodes stay paired over <span class="settings-value">Bluetooth</span> channels and are optimized to protect battery life by remaining silent when idle.</p>
+                </div>
+
+                <!-- Column 2: Standalone Repeaters -->
+                <div class="card">
+                    <i class="fa-solid fa-tower-broadcast feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Standalone Repeaters</h3>
+                    <p>Dedicated hardware modules flashed with specialized infrastructure software targets. Deployed high on rooftops, attics, or structural poles, their sole focus is calculating directed paths and relaying network data packets efficiently.</p>
+                </div>
+
+                <!-- Column 3: Backbone Infrastructure -->
+                <div class="card">
+                    <i class="fa-solid fa-shield-halved feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Backbone Infrastructure</h3>
+                    <p>High-gain, long-range base hardware setups that serve as the main pillars of the state grid. Utilizing <span class="settings-value">Up to 1W Power</span> or high-elevation directional antenna tracking arrays, these links handle heavy structural throughput to bridge county lines.</p>
+                </div>
+
+                <!-- Column 4: Solar Enclosures (Verified 4th Box Entry) -->
+                <div class="card">
+                    <i class="fa-solid fa-solar-panel feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Off-Grid Solar Nodes</h3>
+                    <p>Weatherproofed field enclosures equipped with <span class="settings-value">LiFePO4 Batteries</span> and dedicated charge controllers. These standalone builds run continuously off solar power, sustaining independent repeater functionality through bad winter weather without needing grid hookups.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 NC Mesh. Powered by the community.</p>
+        </div>
+    </footer>
+</body>
+</html>
