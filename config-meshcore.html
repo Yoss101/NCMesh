@@ -284,159 +284,159 @@
         </div>
     </section>
 
-    <!-- SECTION 1: Web Flasher Guide Accordion -->
-    <section class="guide-section">
-        <div class="container" style="max-width: 800px;">
-            <div class="accordion-header">
-                <h4 style="margin-bottom: 0; font-size: 1.4rem;">1. Firmware Flashing Guide (meshcore.io/flasher)</h4>
-                <i class="fa-solid fa-chevron-down accordion-icon"></i>
-            </div>
+<!-- SECTION 1: Web Flasher Guide Accordion -->
+<section class="guide-section">
+    <div class="container" style="max-width: 800px;">
+        <div class="accordion-header">
+            <h4 style="margin-bottom: 0; font-size: 1.4rem;">1. Firmware Flashing Guide (meshcore.io/flasher)</h4>
+            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+        </div>
 
-            <div class="accordion-content">
-                <div class="card">
-                    <p>MeshCore handles client nodes and background infrastructure differently. Hardware behavior is
-                        determined entirely by whether you flash the companion or the repeater binary block to the
-                        device chip.</p>
+        <div class="accordion-content">
+            <div class="card">
+                <p>MeshCore handles client nodes and background infrastructure differently. Hardware behavior is
+                    determined entirely by whether you flash the companion or the repeater binary block to the
+                    device chip.</p>
 
-                    <h4><i class="fa-solid fa-window-maximize" style="color: var(--accent-green);"></i> Web Serial
-                        Connection Requirements</h4>
-                    <p>Launch a browser supporting Web Serial interface actions (Chrome, Edge, or Brave) and navigate to
-                        the flashing utility workspace: <a href="https://meshcore.io" target="_blank"
-                            rel="noopener noreferrer">meshcore.io/flasher</a>.</p>
+                <h4><i class="fa-solid fa-window-maximize" style="color: var(--accent-green);"></i> Web Serial
+                    Connection Requirements</h4>
+                <p>Launch a browser supporting Web Serial interface actions (Chrome, Edge, or Brave) and navigate to
+                    the flashing utility workspace: <a href="https://meshcore.io/flasher" target="_blank"
+                        rel="noopener noreferrer">meshcore.io/flasher</a>.</p>
 
-                    <h4><i class="fa-solid fa-microchip" style="color: var(--accent-green);"></i> Firmware Flash
-                        Procedure</h4>
-                    <ol
-                        style="padding-left: 1.25rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 1.5rem;">
-                        <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Hardware
-                                Select:</strong> Connect your LoRa radio to your computer via USB data cable and select
-                            your exact board layout model from the drop-down menu (e.g., Heltec V3/V4, Seeed Studio
-                            SenseCAP, RAK WisBlock).</li>
-                        <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Role
-                                Assignment:</strong> Select <code class="settings-value">Companion Bluetooth</code> if
-                            you want the radio to link with your phone app, or select <code
-                                class="settings-value">Repeater</code> if building an unattended infrastructure mast.
-                        </li>
-                        <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Wipe &
-                                Flash:</strong> Drop the device into bootloader mode, check the "Erase Flash" flag to
-                            wipe old partition schemes cleanly, and hit Flash to run the environment loader.</li>
-                    </ol>
-                </div>
+                <h4><i class="fa-solid fa-microchip" style="color: var(--accent-green);"></i> Firmware Flash
+                    Procedure</h4>
+                <ol
+                    style="padding-left: 1.25rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 1.5rem;">
+                    <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Hardware
+                            Select:</strong> Connect your LoRa radio to your computer via USB data cable and select
+                        your exact board layout model from the drop-down menu (e.g., Heltec V3/V4, Seeed Studio
+                        SenseCAP, RAK WisBlock).</li>
+                    <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Role
+                            Assignment:</strong> Select <code class="settings-value">Companion Bluetooth</code> if
+                        you want the radio to link with your phone app, or select <code
+                            class="settings-value">Repeater</code> if building an unattended infrastructure mast.
+                    </li>
+                    <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Wipe &amp;
+                            Flash:</strong> Drop the device into bootloader mode, check the "Erase Flash" flag to
+                        wipe old partition schemes cleanly, and hit Flash to run the environment loader.</li>
+                </ol>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- SECTION 2: Companion Node App Setup Accordion -->
-    <section class="guide-section" style="margin-top: 1rem;">
-        <div class="container" style="max-width: 800px;">
-            <div class="accordion-header">
-                <h4 style="margin-bottom: 0; font-size: 1.4rem;">2. Companion Node Application Setup</h4>
-                <i class="fa-solid fa-chevron-down accordion-icon"></i>
-            </div>
-            
-            <div class="accordion-content">
-                <div class="card">
-                    <p>Once a radio board is flashed with companion firmware, it will act as a local Bluetooth server to your companion client application.</p>
-                    
-                    <h4><i class="fa-solid fa-bluetooth" style="color: var(--accent-green);"></i> Pairing to the Node</h4>
-                    <p>Launch the MeshCore app on your smartphone and tap <span class="settings-value">Connect</span> in the top header window. Select your active hardware from the Bluetooth radio pool list and enter the PIN displayed on the node screen (or fallback to <span class="settings-value">123456</span> for screenless card setups).</p>
+<!-- SECTION 2: Companion Node App Setup Accordion -->
+<section class="guide-section" style="margin-top: 1rem;">
+    <div class="container" style="max-width: 800px;">
+        <div class="accordion-header">
+            <h4 style="margin-bottom: 0; font-size: 1.4rem;">2. Companion Node Application Setup</h4>
+            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+        </div>
+        
+        <div class="accordion-content">
+            <div class="card">
+                <p>Once a radio board is flashed with companion firmware, it will act as a local Bluetooth server to your companion client application.</p>
+                
+                <h4><i class="fa-solid fa-bluetooth" style="color: var(--accent-green);"></i> Pairing to the Node</h4>
+                <p>Launch the MeshCore app on your smartphone and tap <span class="settings-value">Connect</span> in the top header window. Select your active hardware from the Bluetooth radio pool list and enter the PIN displayed on the node screen (or fallback to <span class="settings-value">123456</span> for screenless card setups).</p>
 
-                    <h4><i class="fa-solid fa-earth-americas" style="color: var(--accent-green);"></i> App Settings -> Radio Region</h4>
-                    <p>Navigate to your core radio configuration screen inside the phone application and lock the baseline region profile to apply standard NC channels automatically:</p>
-                    <ul>
-                        <li>Radio Region Preset: <span class="settings-value">USA/Canada (Recommended)</span></li>
-                        <li>Frequency Configuration: <span class="settings-value">910.525 MHz</span></li>
-                        <li>Bandwidth (BW): <span class="settings-value">62.5 kHz</span></li>
-                        <li>Spreading Factor (SF): <span class="settings-value">7</span></li>
-                        <li>Coding Rate (CR): <span class="settings-value">5</span></li>
-                    </ul>
+                <h4><i class="fa-solid fa-earth-americas" style="color: var(--accent-green);"></i> App Settings &rarr; Radio Region</h4>
+                <p>Navigate to your core radio configuration screen inside the phone application and lock the baseline region profile to apply standard NC channels automatically:</p>
+                <ul>
+                    <li>Radio Region Preset: <span class="settings-value">USA/Canada (Recommended)</span></li>
+                    <li>Frequency Configuration: <span class="settings-value">910.525 MHz</span></li>
+                    <li>Bandwidth (BW): <span class="settings-value">62.5 kHz</span></li>
+                    <li>Spreading Factor (SF): <span class="settings-value">7</span></li>
+                    <li>Coding Rate (CR): <span class="settings-value">5</span></li>
+                </ul>
 
-                    <h4><i class="fa-solid fa-circle-nodes" style="color: var(--accent-green);"></i> App Settings -> Channel List</h4>
-                    <p>Navigate to the Channels tab and add or join the following regional channels to hook into the community grid:</p>
-                    <ul>
-                        <li>Group Chat: <span class="settings-value">#NCMesh</span></li>
-                        <li>Automated Bots: <span class="settings-value">#bot</span></li>
-                        <li>Weather Telemetry: <span class="settings-value">#wx</span></li>
-                        <li>Path & DX Testing: <span class="settings-value">#test</span></li>
-                    </ul>
+                <h4><i class="fa-solid fa-circle-nodes" style="color: var(--accent-green);"></i> App Settings &rarr; Channel List</h4>
+                <p>Navigate to the Channels tab and add or join the following regional channels to hook into the community grid:</p>
+                <ul>
+                    <li>Group Chat: <span class="settings-value">#NCMesh</span></li>
+                    <li>Automated Bots: <span class="settings-value">#bot</span></li>
+                    <li>Weather Telemetry: <span class="settings-value">#weather</span></li>
+                    <li>Path &amp; DX Testing: <span class="settings-value">#test</span></li>
+                </ul>
 
-                    <h4><i class="fa-solid fa-user-tag" style="color: var(--accent-green);"></i> App Settings -> Display Name</h4>
-                    <p>Locate the user node description card block to name your local device so tracking utilities can catalog signal hops across the network canvas:</p>
-                    <ul>
-                        <li>Display Name: <span class="settings-value">Name your node whatever you want (Emojis supported 🛰️)</span></li>
-                    </ul>
-                </div>
+                <h4><i class="fa-solid fa-user-tag" style="color: var(--accent-green);"></i> App Settings &rarr; Display Name</h4>
+                <p>Locate the user node description card block to name your local device so tracking utilities can catalog signal hops across the network canvas:</p>
+                <ul>
+                    <li>Display Name: <span class="settings-value">Name your node whatever you want (Emojis supported 🛰️)</span></li>
+                </ul>
             </div>
         </div>
-    </section>
-    <!-- SECTION 3: Repeater Configuration Accordion -->
-    <section class="guide-section" style="margin-top: 1rem;">
-        <div class="container" style="max-width: 800px;">
-            <div class="accordion-header">
-                <h4 style="margin-bottom: 0; font-size: 1.4rem;">3. Standalone Infrastructure Repeater Setup via Web
-                    Configurator</h4>
-                <i class="fa-solid fa-chevron-down accordion-icon"></i>
-            </div>
+    </div>
+</section>
 
-            <div class="accordion-content">
-                <div class="card">
-                    <p>Flashed with the specialized <code class="settings-value">Repeater</code> firmware build, these
-                        nodes operate completely unattended. They turn off power-hungry smartphone Bluetooth chips to
-                        optimize processing loops and maximize battery retention on remote solar infrastructure masts.
-                    </p>
+<!-- SECTION 3: Repeater Configuration Accordion -->
+<section class="guide-section" style="margin-top: 1rem;">
+    <div class="container" style="max-width: 800px;">
+        <div class="accordion-header">
+            <h4 style="margin-bottom: 0; font-size: 1.4rem;">3. Standalone Infrastructure Repeater Setup via Web
+                Configurator</h4>
+            <i class="fa-solid fa-chevron-down accordion-icon"></i>
+        </div>
 
-                    <h4><i class="fa-solid fa-plug" style="color: var(--accent-green);"></i> Local USB Serial
-                        Configuration Setup</h4>
-                    <p>Because repeater builds shut down Bluetooth beacons, you cannot configure them through the phone
-                        app. Instead, you change settings directly over a wired connection right after flashing:</p>
-                    <ol
-                        style="padding-left: 1.25rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 1.5rem;">
-                        <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Launch
-                                Configurator:</strong> Keep the device connected to your computer via USB data cable. On
-                            the flashing webpage (<a href="https://meshcore.io" target="_blank"
-                                rel="noopener noreferrer">meshcore.io/flasher</a>), tap the active <span
-                                class="settings-value">Configure Device</span> button that loads right after a
-                            successful flash (or use the standalone web portal at <code
-                                class="settings-value">config.meshcore.io</code>).</li>
-                        <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Lock Local
-                                Region:</strong> Tap the Serial Port connection window and locate the regional
-                            parameters card block. Set the dropdown target to <span
-                                class="settings-value">USA/Canada</span> to load your 910.525 MHz frequency defaults
-                            automatically.</li>
-                        <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Set Node
-                                Identifier:</strong> Under the system settings block, name your node whatever you want.
-                            You are completely free to use nicknames, custom callsigns, or functional descriptors
-                            (Emojis are supported 🌲).</li>
-                        <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Save &
-                                Commit:</strong> Click <span class="settings-value">Save Settings</span> to commit your
-                            variables directly to the hardware memory bank, then safely unplug the board for deployment.
-                        </li>
-                    </ol>
+        <div class="accordion-content">
+            <div class="card">
+                <p>Flashed with the specialized <code class="settings-value">Repeater</code> firmware build, these
+                    nodes operate completely unattended. They turn off power-hungry smartphone Bluetooth chips to
+                    optimize processing loops and maximize battery retention on remote solar infrastructure masts.
+                </p>
 
-                    <h4><i class="fa-solid fa-tower-broadcast" style="color: var(--accent-green);"></i> Placement & Node
-                        Deployment Best Practices</h4>
-                    <p>MeshCore relies on dedicated physical infrastructure rather than client-device signal flooding.
-                        Follow these hardware rules to ensure smooth traffic flow across counties:</p>
-                    <ol style="padding-left: 1.25rem; color: var(--text-muted); line-height: 1.8;">
-                        <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Line-of-Sight
-                                Placement:</strong> Secure your repeater node at high elevations—preferably on chimneys,
-                            poles, or in clear attics. Even modest elevation shifts completely change path discovery
-                            results.</li>
-                        <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Solar
-                                Resilience:</strong> If deploying a remote solar-recharged enclosure, pair your device
-                            with an adequate battery capacity buffer to sustain 24/7 directed-path routines over rainy
-                            winter days.</li>
-                    </ol>
+                <h4><i class="fa-solid fa-plug" style="color: var(--accent-green);"></i> Local USB Serial
+                    Configuration Setup</h4>
+                <p>Because repeater builds shut down Bluetooth beacons, you cannot configure them through the phone
+                    app. Instead, you change settings directly over a wired connection right after flashing:</p>
+                <ol
+                    style="padding-left: 1.25rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 1.5rem;">
+                    <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Launch
+                            Configurator:</strong> Keep the device connected to your computer via USB data cable. On
+                        the flashing webpage (<a href="https://meshcore.io/flasher" target="_blank"
+                            rel="noopener noreferrer">meshcore.io/flasher</a>), tap the active <span
+                            class="settings-value">Configure Device</span> button that loads right after a
+                        successful flash (or use the standalone web portal at <code
+                            class="settings-value">config.meshcore.io</code>).</li>
+                    <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Lock Local
+                            Region:</strong> Tap the Serial Port connection window and locate the regional
+                        parameters card block. Set the dropdown target to <span
+                            class="settings-value">USA/Canada</span> to load your 910.525 MHz frequency defaults
+                        automatically.</li>
+                    <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Set Node
+                            Identifier:</strong> Under the system settings block, name your node whatever you want.
+                        You are completely free to use nicknames, custom callsigns, or functional descriptors
+                        (Emojis are supported 🌲).</li>
+                    <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Save &amp;
+                            Commit:</strong> Click <span class="settings-value">Save Settings</span> to commit your
+                        variables directly to the hardware memory bank, then safely unplug the board for deployment.
+                    </li>
+                </ol>
 
-                    <h4 style="color:var(--accent-green);"><i class="fa-solid fa-comment-dots"></i> Verify Connection
-                    </h4>
-                    <p style="margin-bottom: 0;">Once deployed, check your nearby companion nodes to confirm they can
-                        successfully route text messages through your new repeater's custom node ID marker.</p>
-                </div>
+                <h4><i class="fa-solid fa-tower-broadcast" style="color: var(--accent-green);"></i> Placement &amp; Node
+                    Deployment Best Practices</h4>
+                <p>MeshCore relies on dedicated physical infrastructure rather than client-device signal flooding.
+                    Follow these hardware rules to ensure smooth traffic flow across counties:</p>
+                <ol style="padding-left: 1.25rem; color: var(--text-muted); line-height: 1.8;">
+                    <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Line-of-Sight
+                            Placement:</strong> Secure your repeater node at high elevations—preferably on chimneys,
+                        poles, or in clear attics. Even modest elevation shifts completely change path discovery
+                        results.</li>
+                    <li style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Solar
+                            Resilience:</strong> If deploying a remote solar-recharged enclosure, pair your device
+                        with an adequate battery capacity buffer to sustain 24/7 directed-path routines over rainy
+                        winter days.</li>
+                </ol>
+
+                <h4 style="color:var(--accent-green);"><i class="fa-solid fa-comment-dots"></i> Verify Connection
+                </h4>
+                <p style="margin-bottom: 0;">Once deployed, check your nearby companion nodes to confirm they can
+                    successfully route text messages through your new repeater's custom node ID marker.</p>
             </div>
         </div>
-    </section>
-
+    </div>
+</section>
     <!-- Footer -->
     <footer class="footer">
         <div class="container">

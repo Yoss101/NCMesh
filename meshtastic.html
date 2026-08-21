@@ -276,56 +276,45 @@
         </div>
     </header>
 
-    <section class="hero">
+<section class="hero">
         <div class="container hero-content">
-            <h1>Meshtastic Open-Source Protocol</h1>
-            <p>Utilizing decentralized flood-routing mechanics to sync location data, sensor telemetry, and broadcast
-                messages across public group frequencies.</p>
+            <h1>Off-Grid Communication For Everyone</h1>
+            <p>Send text messages, share GPS locations, and stay connected with your community—no cell towers, Wi-Fi, or monthly subscriptions required.</p>
         </div>
     </section>
-    <!-- SECTION 1: Protocol Analysis (Strict 2x2 Matrix) -->
+
+    <!-- SECTION 1: Key Features & Benefits -->
     <section class="features" style="padding: 2rem 0 2rem 0;">
         <div class="container">
-            <h2>Protocol Architecture Analysis</h2>
+            <h2>How Meshtastic Works</h2>
             <div class="grid-2x2" style="margin-top: 1rem;">
 
                 <!-- Card 1 -->
                 <div class="card">
-                    <i class="fa-solid fa-circle-nodes feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Decentralized Flood Routing</h3>
-                    <p>Meshtastic relies on a robust flood-routing algorithm. When a message is transmitted, every node
-                        within RF range captures it and immediately handles rebroadcasting chores. This creates an
-                        incredibly resilient mesh grid with zero single points of failure, where every participant helps
-                        expand the footprint.</p>
+                    <i class="fa-solid fa-signal feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">No Cell Service Needed</h3>
+                    <p>Meshtastic radios communicate directly device-to-device using low-power radio waves. Stay connected during cell network outages, natural disasters, or while traveling through remote backcountry trails.</p>
                 </div>
 
                 <!-- Card 2 -->
                 <div class="card">
-                    <i class="fa-solid fa-tower-cell feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Zero-Config Discovery</h3>
-                    <p>Because nodes automatically repeat packets they haven't heard before, there is no need for
-                        complex route mapping or path-discovery procedures. If you configure your country domain to
-                        <span class="settings-value">US_915</span>, your node will instantly hear and repeat traffic for
-                        nearby users right out of the box.</p>
+                    <i class="fa-solid fa-circle-nodes feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Community-Powered Range</h3>
+                    <p>Every radio automatically acts as a repeater (unless using Client Mute), hopping messages from node to node over mountains and across town. The more people that join in your area, the stronger and wider your network becomes.</p>
                 </div>
 
                 <!-- Card 3 -->
                 <div class="card">
-                    <i class="fa-solid fa-bullhorn feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Public Group Broadcasts</h3>
-                    <p>The core protocol is optimized to synchronize text messages, tracking markers, and node data
-                        across shared channels. Using the open standard <span class="settings-value">LongFast</span>
-                        preset configuration, community members share an open public square that spans counties via
-                        peer-to-peer hops.</p>
+                    <i class="fa-solid fa-lock feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Public &amp; Private Channels</h3>
+                    <p>Join open local channels like <span class="settings-value">LongFast</span> to talk with nearby radio enthusiasts, or set up secure, end-to-end encrypted private channels just for your family, group, or emergency team.</p>
                 </div>
 
                 <!-- Card 4 -->
                 <div class="card">
-                    <i class="fa-solid fa-shield-halved feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Cryptographic Layering</h3>
-                    <p>While the primary channel remains open for public coordination, the protocol supports secure
-                        secondary channels. By loading a custom shared key, your group can run fully encrypted text
-                        chats and swap positions across the public repeater infrastructure completely privately.</p>
+                    <i class="fa-solid fa-map-location-dot feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Off-Grid GPS &amp; Mapping</h3>
+                    <p>Pair your radio to your iOS or Android phone using Bluetooth. Use the app to view real-time location updates from group members on offline maps without needing cellular data.</p>
                 </div>
 
             </div>
@@ -346,37 +335,37 @@
     </section>
 
     <!-- SECTION 2: Meshtastic Node Architecture (Strict 2x2 Matrix) -->
-    <section class="features" style="padding: 2rem 0;">
+<section class="features" style="padding: 2rem 0;">
         <div class="container">
-            <h2>Meshtastic Node Architecture</h2>
+            <h2>Types of Meshtastic Radios</h2>
             <div class="grid-2x2" style="margin-top: 1rem;">
                 
-                <!-- Card 1: Mobile Client -->
+                <!-- Card 1: Handheld / Portable -->
                 <div class="card">
                     <i class="fa-solid fa-mobile-screen-button feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Client / Handheld Nodes</h3>
-                    <p>Your everyday pocket companion hardware—like the LILYGO T-Echo or T1000-E—paired via <span class="settings-value">Bluetooth</span>. These modules handle messaging, receive local mapping coordinates, and transmit user text strings directly out into the immediate over-the-air workspace.</p>
+                    <h3 style="margin-bottom: 0.75rem;">Handheld &amp; Pocket Nodes</h3>
+                    <p>Compact everyday radios—like the LILYGO T-Echo or SenseCAP T1000-E—that pair to your phone via <span class="settings-value">Bluetooth</span>. Carry them in your pocket or clip them to a backpack to text and share live GPS maps on the move.</p>
                 </div>
 
-                <!-- Card 2: Stationary Relay -->
+                <!-- Card 2: Home / Base Station -->
                 <div class="card">
-                    <i class="fa-solid fa-tower-broadcast feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Stationary Relays</h3>
-                    <p>Standard client-configured devices placed in high-utility clear points like a second-floor window, attic space, or standard roof ridge. Set to the standard <span class="settings-value">Client</span> role, they participate fully in calculated flood-routing steps to extend range across local residential areas.</p>
+                    <i class="fa-solid fa-house-signal feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Home Base Stations</h3>
+                    <p>Radios like the Station G3, Heltec v4 or a RAK Wisblock with RAK4631 placed in an upstairs window, attic, or roof ridge. Kept in the default <span class="settings-value">Client</span> mode, these home nodes act as indoor hubs to help bridge signal coverage across your local neighborhood.</p>
                 </div>
 
-                <!-- Card 3: Infrastructure Routers -->
+                <!-- Card 3: Mountain & Hilltop Repeaters -->
                 <div class="card">
                     <i class="fa-solid fa-mountain-sun feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">High-Elevation Routers</h3>
-                    <p>Premium hardware packages deployed on structural tower masts, mountain peaks, or tall commercial roofs. Configured with specialized <span class="settings-value">Router</span> roles, these units alter the transmission timing matrix to ensure they aggressively relay long-range data packages first.</p>
+                    <h3 style="margin-bottom: 0.75rem;">Hilltop &amp; High-Rise Repeaters</h3>
+                    <p>Dedicated nodes mounted high up on radio towers, mountaintops, or tall buildings. Configured in specialized <span class="settings-value">Router</span> modes, these long-range hubs relay signals over long distances to connect entire counties.</p>
                 </div>
 
-                <!-- Card 4: Off-Grid Power Stations -->
+                <!-- Card 4: Off-Grid Solar Nodes -->
                 <div class="card">
                     <i class="fa-solid fa-solar-panel feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Off-Grid Solar Nodes</h3>
-                    <p>Ruggedized, weatherproof outdoor boxes combining low-power components (like RAK WisBlock modules) with <span class="settings-value">LiFePO4 Batteries</span> and solar panels. These modules sit completely independent of the commercial electrical grid to preserve mesh stability during storms.</p>
+                    <h3 style="margin-bottom: 0.75rem;">Solar-Powered Outdoor Nodes</h3>
+                    <p>Weatherproof enclosures combining ultra-low-power boards (like RAK WisBlock) with <span class="settings-value">Solar Panels</span> and batteries. These units run 24/7 completely independent of the power grid to keep the mesh alive during storms.</p>
                 </div>
 
             </div>

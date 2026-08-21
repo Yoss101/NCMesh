@@ -4,12 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NC Mesh | North Carolina Mesh Network</title>
+    <title>NC Mesh | North Carolina Meshtastic Network</title>
     <link rel="stylesheet" href="./includes/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Discord & Twitter Embed Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ncmesh.net" />
+    <meta property="og:title" content="NCMesh" />
+    <meta property="og:description"
+        content="Decentralized, off-grid LoRa radio network. Send texts, share locations, and stay connected without cell service or Wi-Fi." />
+    <meta property="og:image" content="https://yoss.dev/ncmesh/img/ncmesh_logo.png" />
 
+    <!-- Discord Sidebar Accent Color -->
+    <meta name="theme-color" content="#10B981" />
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             if (window.innerWidth <= 768) {
@@ -258,7 +267,8 @@
                                 class="fa-solid fa-chevron-down nav-arrow"></i></a>
                         <ul class="dropdown-menu">
                             <li><a href="meshtastic.html"><i class="fa-solid fa-circle-info"></i> Network Info</a></li>
-                            <li><a href="config-meshtastic.html"><i class="fa-solid fa-sliders"></i> Setup Instructions</a>
+                            <li><a href="config-meshtastic.html"><i class="fa-solid fa-sliders"></i> Setup
+                                    Instructions</a>
                             </li>
                         </ul>
                     </li>
@@ -269,7 +279,8 @@
                                 class="fa-solid fa-chevron-down nav-arrow"></i></a>
                         <ul class="dropdown-menu">
                             <li><a href="meshcore.html"><i class="fa-solid fa-circle-info"></i> Network Info</a></li>
-                            <li><a href="config-meshcore.html"><i class="fa-solid fa-sliders"></i> Setup Instructions</a>
+                            <li><a href="config-meshcore.html"><i class="fa-solid fa-sliders"></i> Setup
+                                    Instructions</a>
                             </li>
                         </ul>
                     </li>
@@ -298,7 +309,7 @@
                 <div class="card">
                     <i class="fa-solid fa-mountain-sun feature-icon"></i>
                     <h3>Dual-Protocol Coverage</h3>
-                    <p>Supporting both flood-routing and node-directed protocols to accommodate varied deployment use
+                    <p>Supporting both MeshCore and Meshtastic to accommodate varied deployment use
                         cases throughout NC.</p>
                 </div>
                 <div class="card">
@@ -316,7 +327,7 @@
             </div>
         </div>
     </section>
-        <section class="guide-section">
+    <section class="guide-section">
         <div class="container">
             <h2>Join the Group</h2>
             <p>Outside of the mesh network itself, we're most active in our public Discord Server.</p>
