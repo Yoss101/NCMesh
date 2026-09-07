@@ -6,7 +6,7 @@ This repository serves as a **starting point** for rewriting and modernizing the
 
 ## 🚧 Project Status: Call for Contributors!
 
-This project is currently in its **infancy**. It is a baseline foundation that needs the talent, ideas, and code of the greater NC Mesh community to grow. 
+This project is currently nearing completion. It is a solid foundation that has been built and needs the talent, ideas, and code of the greater NC Mesh community to expand. 
 
 Whether you are a seasoned frontend developer, a UI/UX designer, or a Meshtastic/Meshcore hobbyist who wants to help write clear documentation, **your help is needed and appreciated**.
 
