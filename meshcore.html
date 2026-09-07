@@ -1,38 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MeshCore Network | NC Mesh</title>
+    <title>MC | NC Mesh</title>
+    <link rel="icon" type="image/png" href="./img/ncmesh_logo.png">
     <link rel="stylesheet" href="./includes/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <script>
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ncmesh.net" />
+    <meta property="og:title" content="NCMesh" />
+    <meta property="og:description"
+        content="Establish permanent, long-distance infrastructure to maintain constant connectivity across wide terrain. Engineered for dedicated backbone deployment, these high-elevation repeaters form a resilient network built to reliably route data over immense distances, keeping remote outposts and regional communities linked without commercial grid reliance." />
+    <meta property="og:image" content="https://yoss.dev/ncmesh/img/ncmesh_logo.png" />
+    <meta name="theme-color" content="#10B981" />
+
+    <script>
         document.addEventListener("DOMContentLoaded", () => {
-            if (window.innerWidth <= 768) {
-                const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            const toggleBtn = document.querySelector('.nav-toggle');
+            const menuLayer = document.querySelector('.nav-menu');
+            const navIcon = document.querySelector('.nav-icon-animate');
 
-                dropdownToggles.forEach(toggle => {
-                    toggle.addEventListener('click', (e) => {
-                        // Block direct redirect link if mobile sub-menu drawer is collapsed
-                        e.preventDefault();
-                        const parentLi = toggle.closest('.dropdown');
+            if (toggleBtn && menuLayer && navIcon) {
+                toggleBtn.addEventListener('click', () => {
+                    menuLayer.classList.toggle('active');
+                    toggleBtn.classList.toggle('open');
 
-                        // Toggle active tracking layouts
-                        parentLi.classList.toggle('active');
-                        const targetMenu = parentLi.querySelector('.dropdown-menu');
-
-                        if (targetMenu.style.display === 'block') {
-                            targetMenu.style.display = 'none';
-                        } else {
-                            targetMenu.style.display = 'block';
-                        }
-                    });
+                    if (toggleBtn.classList.contains('open')) {
+                        navIcon.classList.remove('fa-bars');
+                        navIcon.classList.add('fa-xmark');
+                    } else {
+                        navIcon.classList.remove('fa-xmark');
+                        navIcon.classList.add('fa-bars');
+                    }
                 });
             }
 
-            // --- 1. Clean Scroll Reveal Effect ---
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+            dropdownToggles.forEach(toggle => {
+                const handleDropdownToggle = (e) => {
+                    if (window.innerWidth <= 600) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const parentLi = toggle.closest('.dropdown');
+                        const targetMenu = parentLi.querySelector('.dropdown-menu');
+
+                        parentLi.classList.toggle('active');
+
+                        const isHidden = window.getComputedStyle(targetMenu).display === 'none';
+                        targetMenu.style.display = isHidden ? 'flex' : 'none';
+                    }
+                };
+
+                toggle.addEventListener('touchstart', handleDropdownToggle, { passive: false });
+                toggle.addEventListener('click', handleDropdownToggle);
+            });
+
             const observerOptions = { root: null, rootMargin: "0px", threshold: 0.1 };
             const revealObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
@@ -52,7 +80,6 @@
                 revealObserver.observe(el);
             });
 
-            // --- 2. Seamless Mesh Network Canvas Engine ---
             const heroSection = document.querySelector(".hero");
             if (heroSection) {
                 const canvas = document.createElement("canvas");
@@ -83,7 +110,6 @@
 
                 class MeshNode {
                     constructor(startX, startY) {
-                        // Accepts coordinates if repositioning on screen resize boundaries
                         this.x = startX !== undefined ? startX : Math.random() * canvas.width;
                         this.y = startY !== undefined ? startY : Math.random() * canvas.height;
                         this.vx = (Math.random() - 0.5) * 0.16;
@@ -93,6 +119,7 @@
                         this.pulseFactor = Math.random() * Math.PI;
                         this.depth = Math.random() * 0.5 + 0.3;
                     }
+
                     update() {
                         this.x += this.vx;
                         this.y += this.vy;
@@ -117,6 +144,7 @@
                             }
                         }
                     }
+
                     draw() {
                         ctx.beginPath();
                         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -125,7 +153,6 @@
                     }
                 }
 
-                // SMART RESIZE: Scales coordinates instead of wiping arrays
                 function resizeCanvas() {
                     const oldWidth = canvas.width || heroSection.offsetWidth;
                     const oldHeight = canvas.height || heroSection.offsetHeight;
@@ -136,18 +163,14 @@
                     const targetPoints = Math.min(Math.floor((canvas.width * canvas.height) / 7500), maxPoints);
 
                     if (points.length === 0) {
-                        // Initial generation pass on boot up
                         for (let i = 0; i < targetPoints; i++) {
                             points.push(new MeshNode());
                         }
                     } else {
-                        // Dynamically re-map current coordinate sets safely
                         points.forEach(p => {
                             p.x = (p.x / oldWidth) * canvas.width;
                             p.y = (p.y / oldHeight) * canvas.height;
                         });
-
-                        // Add or trim nodes smoothly if canvas changes significantly
                         if (points.length < targetPoints) {
                             while (points.length < targetPoints) points.push(new MeshNode());
                         } else if (points.length > targetPoints) {
@@ -206,7 +229,6 @@
                 animateMesh();
             }
 
-            // --- 3. Simple Back-To-Top Button ---
             const topBtn = document.createElement("button");
             topBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
             Object.assign(topBtn.style, {
@@ -234,37 +256,36 @@
             });
         });
     </script>
-</head>
-<body>
 
+<body>
     <header class="navbar">
         <div class="container">
-            <!-- Path explicitly updated to target the local directory syntax -->
-            <a href="index.html" class="logo-brand">
+            <a href="./" class="logo-brand">
                 <img src="./img/ncmesh_logo.png" alt="NC Mesh Logo" class="brand-img">
                 <span class="brand-text">NC<span>Mesh.net</span></span>
             </a>
-            <nav>
+            <button class="nav-toggle" aria-label="Toggle navigation menu">
+                <i class="fa-solid fa-bars nav-icon-animate"></i>
+            </button>
+            <nav class="nav-menu">
                 <ul class="nav-links">
-                    <!-- Meshtastic Dropdown Nesting Menu -->
+                    <li><a href="devices.html">Hardware Glossary</a></li>
                     <li class="dropdown">
-                        <a href="meshtastic.html" class="dropdown-toggle">Meshtastic <i
+                        <a href="#" class="dropdown-toggle">Meshtastic <i
                                 class="fa-solid fa-chevron-down nav-arrow"></i></a>
                         <ul class="dropdown-menu">
                             <li><a href="meshtastic.html"><i class="fa-solid fa-circle-info"></i> Network Info</a></li>
-                            <li><a href="config-meshtastic.html"><i class="fa-solid fa-sliders"></i> Setup Instructions</a>
-                            </li>
+                            <li><a href="config-meshtastic.html"><i class="fa-solid fa-sliders"></i> Setup
+                                    Instructions</a></li>
                         </ul>
                     </li>
-
-                    <!-- MeshCore Dropdown Nesting Menu -->
                     <li class="dropdown">
-                        <a href="meshcore.html" class="dropdown-toggle">MeshCore <i
+                        <a href="#" class="dropdown-toggle">MeshCore <i
                                 class="fa-solid fa-chevron-down nav-arrow"></i></a>
                         <ul class="dropdown-menu">
                             <li><a href="meshcore.html"><i class="fa-solid fa-circle-info"></i> Network Info</a></li>
-                            <li><a href="config-meshcore.html"><i class="fa-solid fa-sliders"></i> Setup Instructions</a>
-                            </li>
+                            <li><a href="config-meshcore.html"><i class="fa-solid fa-sliders"></i> Setup
+                                    Instructions</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -274,105 +295,118 @@
 
     <section class="hero">
         <div class="container hero-content">
-            <h1>MeshCore Next-Gen Routing Protocol</h1>
-            <p>A smart routing mesh built to handle point-to-point text messaging efficiently, significantly reducing network traffic congestion.</p>
-        </div>
-    </section>
-    <!-- Core Elaboration Grid Column Section -->
-    <section class="features" style="padding: 2rem 0 4rem 0;">
-        <div class="container">
-            <h2>Protocol Architecture Analysis</h2>
-            
-            <!-- Swapped to the strict 2x2 container layout -->
-            <div class="grid-2x2" style="margin-top: 1rem;">
-                
-                <!-- Card 1: 64-Hop Directed Routing Layout -->
-                <div class="card">
-                    <i class="fa-solid fa-solid fa-circle-nodes feature-icon" style="color: var(--accent-green);"></i>
-                    <h3 style="margin-bottom: 0.75rem;">64-Hop Scale Capacity</h3>
-                    <p>Unlike standard mesh systems restricted to a 3-to-5 hop threshold to avoid airwave clutter, MeshCore securely scales up to an incredible <span class="settings-value">64 Hops</span>. Because the directed-path protocol only wakes up one specific repeater at a time along the chain, messages can crawl across the entire state through small, low-altitude residential relays without generating data collisions.</p>
-                </div>
+            <h1>Meshcore</h1>
+            <p>Establish permanent, long-distance infrastructure to maintain constant connectivity across wide terrain.
+                Engineered for dedicated backbone deployment, these high-elevation repeaters form a resilient network
+                built to reliably route data over immense distances, keeping remote outposts and regional communities
+                linked without commercial grid reliance.</p>
 
-                <!-- Card 2: Directed Paths -->
-                <div class="card">
-                    <i class="fa-solid fa-route feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Dynamic Directed-Paths</h3>
-                    <p>MeshCore mapping logic isolates routes to direct targets. A 64-byte payload overhead is physically reserved in the packet layer structure to explicitly map and follow a static route. Only assigned infrastructure nodes repeat the packet—leaving neighboring handheld units completely silent.</p>
-                </div>
-
-                <!-- Card 3: Stealthy Adverts -->
-                <div class="card">
-                    <i class="fa-solid fa-eye-slash feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Stealthy Adverts Matrix</h3>
-                    <p>Instead of continuously broadcasting presence pings, MeshCore nodes protect channel availability by utilizing quiet, fixed intervals for Adverts (Node Announcements). Running natively on a multi-hour basis up to a 24-hour cycle, it maps topology alterations without generating packet storms.</p>
-                </div>
-
-                <!-- Card 4: Operational Impact -->
-                <div class="card">
-                    <i class="fa-solid fa-battery-three-quarters feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Operational Grid Impact</h3>
-                    <p>By preventing client devices from wasting energy on repeating background data traffic, MeshCore client nodes only transmit when you explicitly execute a command. This keeps pocket gear alive longer in the field, while focusing critical solar node power reserves purely on high-utility infrastructure paths.</p>
-                </div>
-
+            <div class="grid-3">
+                <h3>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#Intro">Introduction</a>
+                    </div>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#Map">Live Node Map</a>
+                    </div>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#Roles">Roles</a>
+                    </div>
+                </h3>
             </div>
         </div>
     </section>
-    <!-- Dedicated Protocol Map Block -->
-    <section class="map-section">
+    <section class="features" id="Intro">
+        <div class="container">
+            <h2>How Meshcore Works</h2>
+            <div class="grid-2x2" style="margin-top: 1rem;">
+                <div class="card">
+                    <i class="fa-solid fa-signal feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">No Cell Service Needed</h3>
+                    <p>Meshcore radios communicate directly device-to-device using low-power radio waves. Stay
+                        connected during cell network outages, natural disasters, or while traveling through remote
+                        backcountry trails.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-tower-broadcast feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">High-Hop Regional Backbones</h3>
+                    <p>The network protocol supports up to 64 hops. Messages travel smoothly through a dedicated chain
+                        of high-elevation infrastructure repeaters to bridge massive physical distances without causing
+                        local packet congestion.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-route feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Deterministic Routing Paths</h3>
+                    <p>Instead of constantly flooding the airwaves, Meshcore devices discovers and saves persistent
+                        routes. Once a path to a contact is known, traffic is routed cleanly through target repeaters to
+                        save critical bandwidth.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-server feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Persistent Room Servers</h3>
+                    <p>Dedicated infrastructure nodes act as BBS-style store-and-forward servers. They store message
+                        queues directly on the device, allowing offline or roaming users to retrieve missed chat logs
+                        later.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <section class="map-section" id="Map">
         <div class="container">
             <h2>Live NC MeshCore Topology Map</h2>
             <p>Track regional companion setups, standalone repeaters, and localized line-of-sight path availability.</p>
             <div class="map-placeholder">
-                <!-- Replace this iframe slot with your preferred map layer token tracker -->
-                 MeshCore Map
-                <iframe src="https://cs.yoss.dev/#/map" style="width:100%; height:100%; border:none; border-radius:0.5rem;"></iframe>
+                MeshCore Map
+                <iframe src="https://cs.yoss.dev/#/map"
+                    style="width:100%; height:100%; border:none; border-radius:0.5rem;"></iframe>
             </div>
         </div>
     </section>
-
-<!-- SECTION: Types of MeshCore Nodes -->
-    <section class="features" style="padding: 4rem 0;">
+    <section class="features" id="Roles">
         <div class="container">
-            <h2>Types of MeshCore Nodes</h2>
-            
+            <h2>Meshcore Device Roles</h2>
             <div class="grid-2x2" style="margin-top: 1rem;">
-                
-                <!-- Card 1: Companion -->
                 <div class="card">
                     <i class="fa-solid fa-mobile-screen-button feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Handheld &amp; Companion Nodes</h3>
-                    <p>Your everyday portable radio paired to your smartphone via <span class="settings-value">Bluetooth</span>. Used for sending texts and managing app settings while staying silent when idle to save phone and device battery.</p>
+                    <h3 style="margin-bottom: 0.75rem;">Companion Node</h3>
+                    <p>User-facing node paired via <span class="settings-value">Bluetooth</span> or <span
+                            class="settings-value">USB (Serial)</span> to the MeshCore
+                        app. Handles direct messaging, node lists, and local settings management.</p>
                 </div>
-
-                <!-- Card 2: Standalone Repeaters -->
                 <div class="card">
                     <i class="fa-solid fa-tower-broadcast feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Dedicated Neighborhood Repeaters</h3>
-                    <p>Unattended radios placed high on rooftops, attics, or poles. Running dedicated repeater firmware, their only job is to calculate direct routes and quickly relay messages through your local community.</p>
+                    <h3 style="margin-bottom: 0.75rem;">Repeater Node</h3>
+                    <p>Unattended relay node running specialized firmware. Extends signal range across the community by
+                        forwarding mesh packets without needing a phone connection.</p>
                 </div>
-
-                <!-- Card 3: Backbone Infrastructure -->
                 <div class="card">
-                    <i class="fa-solid fa-shield-halved feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Long-Range Backbone Nodes</h3>
-                    <p>High-elevation or higher-power setups positioned on mountain peaks and towers. These strategic hub nodes handle heavy network traffic and bridge long-distance signal gaps across county lines.</p>
+                    <i class="fa-solid fa-comments feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Room Server Node</h3>
+                    <p>Dedicated fixed node hosting public or private group chat rooms. Stores messages for offline
+                        users to retrieve when back within radio range.</p>
                 </div>
-
-                <!-- Card 4: Solar Enclosures -->
                 <div class="card">
-                    <i class="fa-solid fa-solar-panel feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Solar-Powered Outdoor Nodes</h3>
-                    <p>Weatherproof outdoor enclosures equipped with <span class="settings-value">Solar Panels</span> and batteries. Designed to run completely off-grid 24/7 to keep the network alive even during bad weather or power outages.</p>
+                    <i class="fa-solid fa-location-dot feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">KISS TNC Node</h3>
+                    <p>Interfaces over <span class="settings-value">USB (Serial)</span> as a modem for external
+                        applications. Passes raw packet data directly to packet radio software and third-party radio
+                        clients.</p>
                 </div>
-
             </div>
         </div>
     </section>
-
+    <section class="guide-section">
+        <div class="container" style="text-align:center">
+            <div class="card">
+                <h3>Hardware Glossary</h3>
+                <p>Want to learn more about the actual hardware that powers the mesh? </p>
+                <a href="./devices.html" target="_blank" class="btn btn-primary">Take a peek</a>
+            </div>
+        </div>
+    </section>
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 NC Mesh. Powered by the community.</p>
+            <p>&copy; 2026 NC<span>Mesh</span>. Powered by the community.</p>
         </div>
     </footer>
 </body>
+
 </html>

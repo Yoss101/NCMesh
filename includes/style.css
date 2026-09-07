@@ -1,13 +1,13 @@
-/* ==========================================================================
-   1. Core Variables & Base Reset Matrix
-   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap');
+
 :root {
-    --bg-dark: #121314;       /* Deep obsidian canvas background tint */
-    --bg-card: #1a1c1e;       /* Clean matte dark-gray container background */
-    --text-main: #f8fafc;     /* Clean off-white bold header text elements */
-    --text-muted: #cbd5e1;    /* Highly readable slate-gray base copy text */
-    --accent-green: #22c55e;  /* Distinctive NC Mesh vibrant brand green */
-    --border-color: #2a2d31;  /* Balanced section division boundary line border */
+    --bg-navbar: #11151d;
+    --bg-dark: #121314;
+    --bg-card: #202224;
+    --text-main: #f8fafc;
+    --text-muted: #cbd5e1;
+    --accent-green: #22c55e;
+    --border-color: #2a2d31;
 }
 
 * {
@@ -35,9 +35,6 @@ body {
     margin: 0 auto;
 }
 
-/* ==========================================================================
-   2. Browser Custom Scrollbar Elements
-   ========================================================================== */
 ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -66,10 +63,10 @@ body {
     }
 }
 
-/* ==========================================================================
-   3. Global Typography & Core Anchor Formatting
-   ========================================================================== */
-h1, h2, h3, .hero h1 {
+h1,
+h2,
+h3,
+.hero h1 {
     color: var(--text-main);
     font-weight: 700;
     letter-spacing: -0.02em;
@@ -103,9 +100,6 @@ a:hover {
     text-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
 }
 
-/* ==========================================================================
-   4. Header Navigation Bar Layout & Logo Branding
-   ========================================================================== */
 .navbar {
     background-color: rgba(18, 19, 20, 0.9);
     backdrop-filter: blur(10px);
@@ -153,6 +147,11 @@ a:hover {
     font-weight: 800;
 }
 
+.card-badge span {
+    color: var(--accent-green);
+    font-weight: 800;
+}
+
 .logo-brand:hover {
     text-decoration: none;
 }
@@ -173,15 +172,33 @@ a:hover {
 }
 
 .nav-links a {
-    color: var(--text-main);
-    font-weight: 500;
+    color: var(--text-light);
+    text-decoration: none;
     font-size: 0.95rem;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    gap: 6px;
 }
+
+.nav-arrow {
+    transform: rotate(180deg);
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+    display: inline-block !important;
+    margin-top: 1px;
+}
+
 
 .nav-links a:hover {
     text-decoration: none;
     color: var(--accent-green);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(34, 197, 94, 0.15);
+    transition: all 0.3s ease !important;
 }
 
 .nav-links a.active {
@@ -191,31 +208,33 @@ a:hover {
     text-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
 }
 
-/* ==========================================================================
-   5. Interactive Structure Hardware Acceleration Overrides
-   ========================================================================== */
-.card, .map-placeholder, .btn {
+.card,
+.map-placeholder,
+.btn {
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
     position: relative;
     overflow: hidden;
 }
 
-/* ==========================================================================
-   6. Hero & Main Section Component Layouts
-   ========================================================================== */
 .hero {
     padding: 11rem 0 5rem 0;
     position: relative;
     overflow: hidden;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
 }
 
 .hero-content {
     position: relative;
     z-index: 10;
     max-width: 800px;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
 }
 
-/* Structural Features Element Grid */
 .grid-3 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -223,7 +242,6 @@ a:hover {
     padding: 2.5rem 0;
 }
 
-/* Glass effect for structural cards when hovered */
 .card {
     background-color: var(--bg-card);
     padding: 2rem;
@@ -236,8 +254,8 @@ a:hover {
     backdrop-filter: blur(12px) saturate(180%);
     -webkit-backdrop-filter: blur(12px) saturate(180%);
     border-color: rgba(34, 197, 94, 0.45) !important;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 
-                0 0 20px rgba(34, 197, 94, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(34, 197, 94, 0.15);
     transform: translateY(-4px);
 }
 
@@ -247,10 +265,8 @@ a:hover {
     margin-bottom: 1rem;
 }
 
-/* ==========================================================================
-   7. Map Framework Wrapper Containers
-   ========================================================================== */
 .map-section {
+    scroll-margin-top: 50px;
     padding: 3rem 0;
 }
 
@@ -258,7 +274,7 @@ a:hover {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: 0.5rem;
-    height: 450px;
+    height: 600px;
     margin-top: 1.5rem;
     display: flex;
     flex-direction: column;
@@ -272,8 +288,8 @@ a:hover {
     backdrop-filter: blur(12px) saturate(180%);
     -webkit-backdrop-filter: blur(12px) saturate(180%);
     border-color: rgba(34, 197, 94, 0.45) !important;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 
-                0 0 20px rgba(34, 197, 94, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(34, 197, 94, 0.15);
     transform: translateY(-4px);
 }
 
@@ -283,9 +299,6 @@ a:hover {
     margin-bottom: 1rem;
 }
 
-/* ==========================================================================
-   8. UI Interactive Action Buttons
-   ========================================================================== */
 .btn {
     display: inline-block;
     padding: 0.65rem 1.5rem;
@@ -322,9 +335,6 @@ a:hover {
     transform: translateY(-2px);
 }
 
-/* ==========================================================================
-   9. Footer & Branding Metadata Section Notes
-   ========================================================================== */
 .footer {
     border-top: 1px solid var(--border-color);
     padding: 3rem 0;
@@ -333,73 +343,73 @@ a:hover {
     color: #64748b;
 }
 
-/* ==========================================================================
-   10. Fluid Screen Adaptation & Mobile Media Boundaries
-   ========================================================================== */
 @media (max-width: 768px) {
+
     .navbar .container {
-        flex-direction: row;      /* Change from column to row */
-        justify-content: space-between; /* Puts logo on left, links on right */
-        align-items: center;      /* Centers them vertically */
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
         width: 100%;
         padding: 0 1rem;
     }
-    
+
     .logo-brand {
         display: flex;
         align-items: center;
     }
-    
+
     .brand-img {
         height: 38px;
     }
-    
+
     .brand-text {
         font-size: 1.25rem;
     }
-    
+
     .nav-links {
-        display: flex !important;  /* Force horizontal flex */
-        flex-direction: row !important; 
-        margin: 0;                /* Remove default list margins */
-        padding: 0;               /* Remove default list padding */
-        list-style: none;         /* Strip bullet points */
-        gap: .5rem;                /* Space between your two links */
+        display: flex !important;
+        flex-direction: row !important;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        gap: .5rem;
     }
 
     .nav-links li {
-        display: inline-block;    /* Extra safety for list items */
+        display: inline-block;
     }
 
     .nav-links a {
-        font-size: 0.9rem;    
-        white-space: nowrap;   
+        font-size: 0.9rem;
+        white-space: nowrap;
     }
-    
+
     .hero {
-        padding: 8rem 0 3rem 0;   /* Reduced top padding since navbar is shorter now */
+        padding: 8rem 0 3rem 0;
     }
+
     .hero h1 {
         font-size: 2rem;
     }
+
     .btn-secondary {
         margin-left: 0;
         margin-top: 0.75rem;
     }
-    .btn, .btn-primary, .btn-secondary {
+
+    .btn,
+    .btn-primary,
+    .btn-secondary {
         display: block;
         text-align: center;
     }
 }
-/* ==========================================================================
-   11. Navigation Dropdown Interface & Glass Panel Overrides
-   ========================================================================== */
+
 .nav-links li {
     position: relative;
     display: inline-block;
 }
 
-/* Setup alignment for indicators */
 .dropdown-toggle {
     display: flex;
     align-items: center;
@@ -412,56 +422,53 @@ a:hover {
     opacity: 0.8;
 }
 
-/* Hidden Dropdown Panel Core Layout Metrics */
 .dropdown-menu {
     position: absolute;
     top: 100%;
     left: 50%;
     transform: translateX(-50%) translateY(10px);
-    background-color: rgba(26, 28, 30, 0.95); /* Matched to --bg-card */
+    background-color: rgba(26, 28, 30, 0.95);
     border: 1px solid var(--border-color);
     border-radius: 0.5rem;
     min-width: 170px;
     padding: 0.5rem 0;
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    display: block;
     opacity: 0;
     visibility: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(34, 197, 94, 0.05);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(12px);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, visibility 0.3s ease;
     z-index: 1100;
 }
 
-/* Dropdown Menu List Anchors */
 .dropdown-menu li {
     display: block;
     width: 100%;
+    margin-bottom: 0.25rem;
 }
 
 .dropdown-menu a {
     display: flex;
     align-items: center;
+    justify-content: center;
+    text-align: center;
     gap: 0.6rem;
-    padding: 0.6rem 1.2rem;
+    padding: 0.6rem 0;
     color: var(--text-muted) !important;
     font-size: 0.875rem !important;
     width: 100%;
-    text-align: left;
+    box-sizing: border-box;
     transition: all 0.2s ease !important;
 }
 
-/* Left Icon Accent Highlight Colors inside Drop Panel */
 .dropdown-menu a i {
     font-size: 0.9rem;
-    color: #4b5563; /* Subtle gray fallback icon tint */
+    color: #4b5563;
     transition: color 0.2s ease;
 }
 
-/* Trigger reveal animations on user cursor hover */
 .dropdown:hover .dropdown-menu {
     opacity: 1;
     visibility: visible;
@@ -469,25 +476,21 @@ a:hover {
 }
 
 .dropdown:hover .nav-arrow {
-    transform: rotate(180deg);
+    transform: rotate(360deg);
     color: var(--accent-green);
 }
 
-/* Inside Item Hover States mapping signature brand neon-green glow */
 .dropdown-menu a:hover {
     background-color: rgba(34, 197, 94, 0.08);
     color: var(--text-main) !important;
     text-decoration: none;
-    padding-left: 1.4rem; /* Soft linear offset expand */
+    transform: translateY(-2px);
 }
 
 .dropdown-menu a:hover i {
     color: var(--accent-green);
 }
 
-/* ==========================================================================
-   12. Responsive Adaptation For Mobile Dropdowns
-   ========================================================================== */
 @media (max-width: 768px) {
     .nav-links {
         width: 100%;
@@ -495,17 +498,16 @@ a:hover {
         gap: 0.75rem !important;
         padding-top: 0.5rem;
     }
-    
+
     .nav-links li {
         width: 100%;
         text-align: center;
     }
-    
+
     .dropdown-toggle {
         justify-content: center;
     }
 
-    /* Convert absolute cards to flat linear rows under parent targets on phones */
     .dropdown-menu {
         position: relative;
         top: 0;
@@ -517,40 +519,39 @@ a:hover {
         box-shadow: none;
         opacity: 1;
         visibility: visible;
-        display: none; /* Controlled dynamically via tap click toggle fallback */
+        display: none;
         padding: 0.25rem 0;
         margin-top: 0.25rem;
     }
-    
-    /* Auto expand structural child nodes inside narrow viewports */
+
     .dropdown:hover .dropdown-menu,
     .dropdown.active .dropdown-menu {
         display: block;
     }
-    
+
     .dropdown-menu a {
         justify-content: center;
         padding: 0.5rem 0;
     }
-    
+
     .dropdown-menu a:hover {
         padding-left: 0;
         background-color: transparent;
         color: var(--accent-green) !important;
     }
 }
-/* Header Navbar Image Brand Constraints */
+
 .logo-brand {
     display: flex;
     align-items: center;
-    gap: 0.75rem;          /* Uniform horizontal spacing gap between asset and text elements */
+    gap: 0.75rem;
     text-decoration: none;
     padding: 0.25rem 0;
 }
 
 .brand-img {
-    height: 44px;          /* Clean bounding height constraint matched with header font size metrics */
-    width: auto;           /* Automatically recalculates correct aspect ratios with zero stretching */
+    height: 44px;
+    width: auto;
     object-fit: contain;
     filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.15));
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
@@ -569,9 +570,6 @@ a:hover {
     font-weight: 800;
 }
 
-/* ==========================================================================
-   13. Interactive Accordion Configuration Layout
-   ========================================================================== */
 .accordion-header {
     cursor: pointer;
     display: flex;
@@ -596,7 +594,6 @@ a:hover {
     color: var(--accent-green);
 }
 
-/* Hidden container mechanics with hardware acceleration scaling */
 .accordion-content {
     max-height: 0;
     overflow: hidden;
@@ -604,20 +601,18 @@ a:hover {
     visibility: hidden;
     transform: translateY(-8px);
     transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.4s ease,
-                visibility 0.4s ease,
-                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        opacity 0.4s ease,
+        visibility 0.4s ease,
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .guide-section.active .accordion-content {
-    max-height: 4000px; /* High bounding allowance to accommodate long inner nested lists */
+    max-height: 4000px;
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
-/* ==========================================================================
-   13. Optimized Interactive Accordion Dashboard Layout
-   ========================================================================== */
+
 .accordion-header {
     cursor: pointer;
     display: flex;
@@ -652,7 +647,6 @@ a:hover {
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
 }
 
-/* Dynamic Active States when expanded */
 .guide-section.active .accordion-header {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -665,7 +659,6 @@ a:hover {
     color: var(--accent-green);
 }
 
-/* Accordion slide-down container physics */
 .accordion-content {
     max-height: 0;
     overflow: hidden;
@@ -673,9 +666,9 @@ a:hover {
     visibility: hidden;
     transform: translateY(-4px);
     transition: max-height 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.4s ease,
-                visibility 0.4s ease,
-                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        opacity 0.4s ease,
+        visibility 0.4s ease,
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .guide-section.active .accordion-content {
@@ -685,7 +678,6 @@ a:hover {
     transform: translateY(0);
 }
 
-/* Interior Card Clean Up styling */
 .accordion-content .card {
     border-top: none;
     border-top-left-radius: 0;
@@ -695,7 +687,6 @@ a:hover {
     backdrop-filter: blur(8px);
 }
 
-/* Sequential Onboarding Setup Steps */
 .accordion-content p strong {
     color: var(--accent-green);
 }
@@ -705,7 +696,6 @@ a:hover {
     font-size: 0.95rem;
 }
 
-/* Core Settings Group Headers */
 .accordion-content h4 {
     color: var(--text-main);
     font-size: 1.1rem;
@@ -718,7 +708,6 @@ a:hover {
     gap: 0.5rem;
 }
 
-/* Formatting for Config Target unordered lists */
 .accordion-content ul {
     list-style: none;
     padding-left: 0;
@@ -740,7 +729,6 @@ a:hover {
     border-bottom: 1px solid rgba(255, 255, 255, 0.02);
 }
 
-/* Custom Highlight Keypads for technical values */
 .settings-value {
     font-family: monospace;
     font-size: 0.85rem;
@@ -752,33 +740,356 @@ a:hover {
     font-weight: 600;
 }
 
-/* Themed Warning Alerts (Like the MQTT warning line) */
-/* Full-Width Accordion Warning Banner Elements */
 .settings-warning {
     display: block !important;
     width: 100% !important;
-    color: #f87171 !important;                 /* Vibrant, readable light-crimson tint */
-    background-color: rgba(239, 68, 68, 0.07); /* Faint dark red backdrop blend */
+    color: #f87171 !important;
+    background-color: rgba(239, 68, 68, 0.07);
     border: 1px solid rgba(239, 68, 68, 0.2);
-    border-left: 3px solid #ef4444;            /* Solid high-contrast alert border edge */
+    border-left: 3px solid #ef4444;
     padding: 0.85rem 1.25rem !important;
     border-radius: 0.375rem !important;
     font-size: 0.85rem !important;
     line-height: 1.5;
-    margin: 1rem 0;                           /* Even vertical block spacing separation */
+    margin: 1rem 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-/* Strict 2x2 Layout Matrix for Protocol Analysis */
+
 .grid-2x2 {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Enforces exactly two equal columns on desktop */
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
     padding: 2.5rem 0;
 }
 
-/* Fluid responsive adaptation for tablets and smartphones */
 @media (max-width: 768px) {
     .grid-2x2 {
-        grid-template-columns: 1fr;         /* Collapses safely into a strict vertical column layout */
+        grid-template-columns: 1fr;
     }
+}
+
+.spec-list li {
+    margin-left: 0px;
+}
+
+h3 span {
+    color: var(--accent-green) !important;
+}
+
+.card-badge.badge-primary,
+.card-badge.badge-danger,
+.card-badge.badge-secondary,
+.card-badge.badge-warning {
+    display: inline-block;
+    align-self: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-shadow: 2px 3px 2px rgba(0, 0, 0, 0.8) !important;
+    padding: 4px 12px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.badge-danger {
+    background-color: #e53e3e8e;
+}
+
+.badge-warning {
+    background-color: #336361;
+}
+
+.badge-primary {
+    background-color: rgb(58, 58, 59);
+}
+
+.badge-secondary {
+    background-color: #a86500;
+}
+
+.hardware-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    padding-top: 25px;
+}
+
+.hardware-card img {
+    width: 100%;
+    max-width: 160px;
+    height: 160px;
+    object-fit: contain;
+    background-color: transparent;
+    display: block;
+    margin: 0 auto;
+}
+
+.hardware-btn {
+    margin-top: auto;
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.features,
+.hardware-section {
+    scroll-margin-top: 115px;
+}
+
+.hero-content h1 {
+    color: var(--accent-green) !important;
+}
+
+.nav-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.scmesh {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.35rem;
+    text-align: center;
+    padding-bottom: 10px;
+    font-weight: 700;
+    color: #0D96F2;
+    text-decoration: none;
+    text-shadow: 0 0 5px rgba(13, 150, 242, 0.5);
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .nav-toggle {
+        display: block;
+    }
+
+    .scmesh {
+        font-size: 1.6rem;
+    }
+
+    .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--bg-card);
+        border-bottom: 2px solid var(--border-dark);
+        box-sizing: border-box;
+        padding: 25px 20px;
+        z-index: 999;
+        display: none;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .nav-menu.active {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .navbar .nav-links {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        width: 100% !important;
+        gap: 20px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .navbar .nav-links li {
+        width: 100% !important;
+        text-align: center !important;
+    }
+
+    .navbar .nav-links a {
+        display: inline-flex !important;
+        justify-content: center !important;
+        width: auto !important;
+        padding: 6px 0 !important;
+        font-size: 1.05rem !important;
+    }
+
+    .navbar .dropdown-menu {
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        box-shadow: none !important;
+        background-color: var(--bg-card) !important;
+        border: none !important;
+        border-radius: 4px;
+        width: 100% !important;
+        margin-top: 0 !important;
+        padding: 0 !important;
+        display: none !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        overflow: visible !important;
+    }
+
+    .navbar .dropdown-menu li {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    .navbar .dropdown-menu li a {
+        justify-content: center !important;
+        padding: 8px 0 !important;
+        color: var(--text-gray) !important;
+    }
+
+    .navbar .dropdown.active .nav-arrow {
+        transform: rotate(0deg);
+        color: var(--accent-green);
+    }
+
+    .dropdown-link-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .mobile-arrow-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .navbar .dropdown-menu {
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        box-shadow: none !important;
+        background-color: var(--bg-card) !important;
+        border: none !important;
+        width: 100% !important;
+        margin-top: 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transition: opacity 0.2s ease, height 0.2s ease, padding 0.2s ease;
+    }
+
+    .navbar .dropdown.active .dropdown-menu {
+        display: flex !important;
+        opacity: 1 !important;
+        height: auto !important;
+        pointer-events: auto !important;
+        padding: 10px 0 !important;
+        margin-top: 10px !important;
+    }
+
+    .navbar .dropdown-menu li {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    .hamburger-icon {
+        color: var(--accent-green);
+        width: 24px;
+        height: 18px;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .hamburger-icon span {
+        display: block;
+        width: 100%;
+        height: 2px;
+        background-color: var(--text-light);
+        border-radius: 2px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+            opacity 0.2s ease-in-out,
+            background-color 0.3s ease;
+    }
+
+    .nav-toggle.open .hamburger-icon span:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+        background-color: var(--accent-green);
+    }
+
+    .nav-toggle.open .hamburger-icon span:nth-child(2) {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    .nav-toggle.open .hamburger-icon span:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+        background-color: var(--accent-green);
+    }
+
+    .nav-icon-animate {
+        display: inline-block;
+        transition: transform 0.25s ease-in-out, opacity 0.15s ease-in-out;
+    }
+
+    .nav-toggle.open .nav-icon-animate {
+        transform: rotate(90deg);
+        color: #00aa00;
+    }
+
+    .navbar .nav-menu .nav-links .dropdown-menu li {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
+
+    .navbar .nav-menu .nav-links .dropdown-menu li a {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        width: 100% !important;
+        padding: 0.6rem 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .navbar .nav-menu .nav-links .dropdown-menu li a i {
+        display: inline-block !important;
+        margin: 0 !important;
+    }
+}
+
+.dropdown-link-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.mobile-arrow-toggle {
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 10px;
+    display: none;
+}
+
+footer span {
+    color: var(--accent-green)
 }

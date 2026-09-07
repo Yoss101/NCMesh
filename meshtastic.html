@@ -4,36 +4,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meshtastic Network | NC Mesh</title>
+    <title>MT | NC Mesh</title>
+    <link rel="icon" type="image/png" href="./img/ncmesh_logo.png">
     <link rel="stylesheet" href="./includes/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ncmesh.net" />
+    <meta property="og:title" content="NCMesh" />
+    <meta property="og:description"
+        content="Deploy a pop-up, decentralized communication network anywhere you go. Perfectly suited for backcountry camping trips, group hikes, or crowded festival gatherings, it lets your group spin up ad-hoc text messaging and precise GPS location sharing on the fly—completely independent of cell towers, Wi-Fi infrastructure, or monthly subscription fees." />
+    <meta property="og:image" content="https://yoss.dev/ncmesh/img/ncmesh_logo.png" />
+    <meta name="theme-color" content="#10B981" />
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            if (window.innerWidth <= 768) {
-                const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            const toggleBtn = document.querySelector('.nav-toggle');
+            const menuLayer = document.querySelector('.nav-menu');
+            const navIcon = document.querySelector('.nav-icon-animate');
 
-                dropdownToggles.forEach(toggle => {
-                    toggle.addEventListener('click', (e) => {
-                        // Block direct redirect link if mobile sub-menu drawer is collapsed
-                        e.preventDefault();
-                        const parentLi = toggle.closest('.dropdown');
+            if (toggleBtn && menuLayer && navIcon) {
+                toggleBtn.addEventListener('click', () => {
+                    menuLayer.classList.toggle('active');
+                    toggleBtn.classList.toggle('open');
 
-                        // Toggle active tracking layouts
-                        parentLi.classList.toggle('active');
-                        const targetMenu = parentLi.querySelector('.dropdown-menu');
-
-                        if (targetMenu.style.display === 'block') {
-                            targetMenu.style.display = 'none';
-                        } else {
-                            targetMenu.style.display = 'block';
-                        }
-                    });
+                    if (toggleBtn.classList.contains('open')) {
+                        navIcon.classList.remove('fa-bars');
+                        navIcon.classList.add('fa-xmark');
+                    } else {
+                        navIcon.classList.remove('fa-xmark');
+                        navIcon.classList.add('fa-bars');
+                    }
                 });
             }
 
-            // --- 1. Clean Scroll Reveal Effect ---
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+            dropdownToggles.forEach(toggle => {
+                const handleDropdownToggle = (e) => {
+                    if (window.innerWidth <= 600) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const parentLi = toggle.closest('.dropdown');
+                        const targetMenu = parentLi.querySelector('.dropdown-menu');
+
+                        parentLi.classList.toggle('active');
+
+                        const isHidden = window.getComputedStyle(targetMenu).display === 'none';
+                        targetMenu.style.display = isHidden ? 'flex' : 'none';
+                    }
+                };
+
+                toggle.addEventListener('touchstart', handleDropdownToggle, { passive: false });
+                toggle.addEventListener('click', handleDropdownToggle);
+            });
+
             const observerOptions = { root: null, rootMargin: "0px", threshold: 0.1 };
             const revealObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
@@ -53,7 +80,6 @@
                 revealObserver.observe(el);
             });
 
-            // --- 2. Seamless Mesh Network Canvas Engine ---
             const heroSection = document.querySelector(".hero");
             if (heroSection) {
                 const canvas = document.createElement("canvas");
@@ -84,7 +110,6 @@
 
                 class MeshNode {
                     constructor(startX, startY) {
-                        // Accepts coordinates if repositioning on screen resize boundaries
                         this.x = startX !== undefined ? startX : Math.random() * canvas.width;
                         this.y = startY !== undefined ? startY : Math.random() * canvas.height;
                         this.vx = (Math.random() - 0.5) * 0.16;
@@ -94,6 +119,7 @@
                         this.pulseFactor = Math.random() * Math.PI;
                         this.depth = Math.random() * 0.5 + 0.3;
                     }
+
                     update() {
                         this.x += this.vx;
                         this.y += this.vy;
@@ -118,6 +144,7 @@
                             }
                         }
                     }
+
                     draw() {
                         ctx.beginPath();
                         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -126,7 +153,6 @@
                     }
                 }
 
-                // SMART RESIZE: Scales coordinates instead of wiping arrays
                 function resizeCanvas() {
                     const oldWidth = canvas.width || heroSection.offsetWidth;
                     const oldHeight = canvas.height || heroSection.offsetHeight;
@@ -137,18 +163,14 @@
                     const targetPoints = Math.min(Math.floor((canvas.width * canvas.height) / 7500), maxPoints);
 
                     if (points.length === 0) {
-                        // Initial generation pass on boot up
                         for (let i = 0; i < targetPoints; i++) {
                             points.push(new MeshNode());
                         }
                     } else {
-                        // Dynamically re-map current coordinate sets safely
                         points.forEach(p => {
                             p.x = (p.x / oldWidth) * canvas.width;
                             p.y = (p.y / oldHeight) * canvas.height;
                         });
-
-                        // Add or trim nodes smoothly if canvas changes significantly
                         if (points.length < targetPoints) {
                             while (points.length < targetPoints) points.push(new MeshNode());
                         } else if (points.length > targetPoints) {
@@ -207,7 +229,6 @@
                 animateMesh();
             }
 
-            // --- 3. Simple Back-To-Top Button ---
             const topBtn = document.createElement("button");
             topBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
             Object.assign(topBtn.style, {
@@ -235,93 +256,98 @@
             });
         });
     </script>
-</head>
 
 <body>
-
     <header class="navbar">
         <div class="container">
-            <!-- Path explicitly updated to target the local directory syntax -->
-            <a href="index.html" class="logo-brand">
+            <a href="./" class="logo-brand">
                 <img src="./img/ncmesh_logo.png" alt="NC Mesh Logo" class="brand-img">
                 <span class="brand-text">NC<span>Mesh.net</span></span>
             </a>
-            <nav>
+            <button class="nav-toggle" aria-label="Toggle navigation menu">
+                <i class="fa-solid fa-bars nav-icon-animate"></i>
+            </button>
+            <nav class="nav-menu">
                 <ul class="nav-links">
-                    <!-- Meshtastic Dropdown Nesting Menu -->
+                    <li><a href="devices.html">Hardware Glossary</a></li>
                     <li class="dropdown">
-                        <a href="meshtastic.html" class="dropdown-toggle">Meshtastic <i
+                        <a href="#" class="dropdown-toggle">Meshtastic <i
                                 class="fa-solid fa-chevron-down nav-arrow"></i></a>
                         <ul class="dropdown-menu">
                             <li><a href="meshtastic.html"><i class="fa-solid fa-circle-info"></i> Network Info</a></li>
                             <li><a href="config-meshtastic.html"><i class="fa-solid fa-sliders"></i> Setup
-                                    Instructions</a>
-                            </li>
+                                    Instructions</a></li>
                         </ul>
                     </li>
-
-                    <!-- MeshCore Dropdown Nesting Menu -->
                     <li class="dropdown">
-                        <a href="meshcore.html" class="dropdown-toggle">MeshCore <i
+                        <a href="#" class="dropdown-toggle">MeshCore <i
                                 class="fa-solid fa-chevron-down nav-arrow"></i></a>
                         <ul class="dropdown-menu">
                             <li><a href="meshcore.html"><i class="fa-solid fa-circle-info"></i> Network Info</a></li>
                             <li><a href="config-meshcore.html"><i class="fa-solid fa-sliders"></i> Setup
-                                    Instructions</a>
-                            </li>
+                                    Instructions</a></li>
                         </ul>
                     </li>
                 </ul>
             </nav>
         </div>
     </header>
-
-<section class="hero">
+    <section class="hero">
         <div class="container hero-content">
-            <h1>Off-Grid Communication For Everyone</h1>
-            <p>Send text messages, share GPS locations, and stay connected with your community—no cell towers, Wi-Fi, or monthly subscriptions required.</p>
+            <h1>Meshtastic</h1>
+            <p>Deploy a pop-up, decentralized communication network anywhere you go. Perfectly suited for backcountry
+                camping trips, group hikes, or crowded festival gatherings, it lets your group spin up ad-hoc text
+                messaging and precise GPS location sharing on the fly—completely independent of cell towers, Wi-Fi
+                infrastructure, or monthly subscription fees.</p>
+
+            <div class="grid-3">
+                <h3>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#Intro">Introduction</a>
+                    </div>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#Map">Live Node Map</a>
+                    </div>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#Roles">Roles</a>
+                    </div>
+                </h3>
+            </div>
         </div>
     </section>
-
-    <!-- SECTION 1: Key Features & Benefits -->
-    <section class="features" style="padding: 2rem 0 2rem 0;">
+    <section class="features" id="Intro">
         <div class="container">
             <h2>How Meshtastic Works</h2>
             <div class="grid-2x2" style="margin-top: 1rem;">
-
-                <!-- Card 1 -->
                 <div class="card">
                     <i class="fa-solid fa-signal feature-icon"></i>
                     <h3 style="margin-bottom: 0.75rem;">No Cell Service Needed</h3>
-                    <p>Meshtastic radios communicate directly device-to-device using low-power radio waves. Stay connected during cell network outages, natural disasters, or while traveling through remote backcountry trails.</p>
+                    <p>Meshtastic radios communicate directly device-to-device using low-power radio waves. Stay
+                        connected during cell network outages, natural disasters, or while traveling through remote
+                        backcountry trails.</p>
                 </div>
-
-                <!-- Card 2 -->
                 <div class="card">
                     <i class="fa-solid fa-circle-nodes feature-icon"></i>
                     <h3 style="margin-bottom: 0.75rem;">Community-Powered Range</h3>
-                    <p>Every radio automatically acts as a repeater (unless using Client Mute), hopping messages from node to node over mountains and across town. The more people that join in your area, the stronger and wider your network becomes.</p>
+                    <p>Every radio automatically acts as a repeater (unless using Client Mute), hopping messages from
+                        node to node over mountains and across town. The more people that join in your area, the
+                        stronger and wider your network becomes.</p>
                 </div>
-
-                <!-- Card 3 -->
                 <div class="card">
                     <i class="fa-solid fa-lock feature-icon"></i>
                     <h3 style="margin-bottom: 0.75rem;">Public &amp; Private Channels</h3>
-                    <p>Join open local channels like <span class="settings-value">LongFast</span> to talk with nearby radio enthusiasts, or set up secure, end-to-end encrypted private channels just for your family, group, or emergency team.</p>
+                    <p>Join open local channels like <span class="settings-value">LongFast</span> to talk with nearby
+                        radio enthusiasts, or set up secure, end-to-end encrypted private channels just for your family,
+                        group, or emergency team.</p>
                 </div>
-
-                <!-- Card 4 -->
                 <div class="card">
                     <i class="fa-solid fa-map-location-dot feature-icon"></i>
                     <h3 style="margin-bottom: 0.75rem;">Off-Grid GPS &amp; Mapping</h3>
-                    <p>Pair your radio to your iOS or Android phone using Bluetooth. Use the app to view real-time location updates from group members on offline maps without needing cellular data.</p>
+                    <p>Pair your radio to your iOS or Android phone using Bluetooth. Use the app to view real-time
+                        location updates from group members on offline maps without needing cellular data.</p>
                 </div>
 
             </div>
         </div>
     </section>
-    <!-- Dedicated Protocol Map Block -->
-    <section class="map-section">
+    <section class="map-section" id="Map">
         <div class="container">
             <h2>Live NC Meshtastic Topology Map</h2>
             <p>Track reported public coordinator nodes, telemetry signals, and active baseline line-of-sight tracking
@@ -333,48 +359,58 @@
             </div>
         </div>
     </section>
-
-    <!-- SECTION 2: Meshtastic Node Architecture (Strict 2x2 Matrix) -->
-<section class="features" style="padding: 2rem 0;">
+    <section class="features" id="Roles">
         <div class="container">
-            <h2>Types of Meshtastic Radios</h2>
+            <h2>Meshtastic Device Roles</h2>
             <div class="grid-2x2" style="margin-top: 1rem;">
-                
-                <!-- Card 1: Handheld / Portable -->
                 <div class="card">
                     <i class="fa-solid fa-mobile-screen-button feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Handheld &amp; Pocket Nodes</h3>
-                    <p>Compact everyday radios—like the LILYGO T-Echo or SenseCAP T1000-E—that pair to your phone via <span class="settings-value">Bluetooth</span>. Carry them in your pocket or clip them to a backpack to text and share live GPS maps on the move.</p>
+                    <h3 style="margin-bottom: 0.75rem;">Client</h3>
+                    <p>The standard role for everyday portable radios—like the LILYGO T-Echo or SeeedStudio T1000-E. It
+                        sends, receives, and <span class="settings-value">intelligently repeats</span> messages,
+                        utilizing smart delays to prevent network packet collisions while helping to expand the mesh on
+                        the move.</p>
                 </div>
-
-                <!-- Card 2: Home / Base Station -->
+                <div class="card">
+                    <i class="fa-solid fa-volume-xmark feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Client Mute</h3>
+                    <p>A specialized role that can send and receive its own messages but <span
+                            class="settings-value">never forwards or repeats</span> packets from other devices. It is
+                        ideal for secondary pocket devices or highly congested areas to drastically reduce network noise
+                        and airtime load.</p>
+                </div>
                 <div class="card">
                     <i class="fa-solid fa-house-signal feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Home Base Stations</h3>
-                    <p>Radios like the Station G3, Heltec v4 or a RAK Wisblock with RAK4631 placed in an upstairs window, attic, or roof ridge. Kept in the default <span class="settings-value">Client</span> mode, these home nodes act as indoor hubs to help bridge signal coverage across your local neighborhood.</p>
+                    <h3 style="margin-bottom: 0.75rem;">Client Base</h3>
+                    <p>A personal base station role designed for well-positioned attic or rooftop home nodes. It
+                        functions like a standard client but <span class="settings-value">prioritizes
+                            rebroadcasting</span> messages to and from your favorited nodes, bridging the gap for weaker
+                        indoor handhelds.</p>
                 </div>
-
-                <!-- Card 3: Mountain & Hilltop Repeaters -->
                 <div class="card">
-                    <i class="fa-solid fa-mountain-sun feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Hilltop &amp; High-Rise Repeaters</h3>
-                    <p>Dedicated nodes mounted high up on radio towers, mountaintops, or tall buildings. Configured in specialized <span class="settings-value">Router</span> modes, these long-range hubs relay signals over long distances to connect entire counties.</p>
+                    <i class="fa-solid fa-tower-cell feature-icon"></i>
+                    <h3 style="margin-bottom: 0.75rem;">Router</h3>
+                    <p>Dedicated backbone infrastructure nodes mounted on mountaintops, towers, or strategic peaks. They
+                        aggressively prioritize forwarding all network traffic while completely <span
+                            class="settings-value">disabling screens and Bluetooth</span> to optimize power efficiency
+                        and mesh range.</p>
                 </div>
+            </div>
 
-                <!-- Card 4: Off-Grid Solar Nodes -->
-                <div class="card">
-                    <i class="fa-solid fa-solar-panel feature-icon"></i>
-                    <h3 style="margin-bottom: 0.75rem;">Solar-Powered Outdoor Nodes</h3>
-                    <p>Weatherproof enclosures combining ultra-low-power boards (like RAK WisBlock) with <span class="settings-value">Solar Panels</span> and batteries. These units run 24/7 completely independent of the power grid to keep the mesh alive during storms.</p>
-                </div>
-
+        </div>
+    </section>
+    <section class="guide-section">
+        <div class="container" style="text-align:center">
+            <div class="card">
+                <h3>Hardware Glossary</h3>
+                <p>Want to learn more about the actual hardware that powers the mesh? </p>
+                <a href="./devices.html" target="_blank" class="btn btn-primary">Take a peek</a>
             </div>
         </div>
     </section>
-
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 NC Mesh. Powered by the community.</p>
+            <p>&copy; 2026 NC<span>Mesh</span>. Powered by the community.</p>
         </div>
     </footer>
 </body>

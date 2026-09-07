@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hardware | NC Mesh</title>
+    <link rel="icon" type="image/png" href="./img/ncmesh_logo.png">
+    <link rel="stylesheet" href="./includes/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ncmesh.net" />
+    <meta property="og:title" content="NCMesh" />
+    <meta property="og:description"
+        content="A curated reference for LoRa nodes, repeaters, trackers, and base stations deployed within the North Carolina mesh landscape." />
+    <meta property="og:image" content="https://yoss.dev/ncmesh/img/ncmesh_logo.png" />
+    <meta name="theme-color" content="#10B981" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const toggleBtn = document.querySelector('.nav-toggle');
+            const menuLayer = document.querySelector('.nav-menu');
+            const navIcon = document.querySelector('.nav-icon-animate');
+
+            if (toggleBtn && menuLayer && navIcon) {
+                toggleBtn.addEventListener('click', () => {
+                    menuLayer.classList.toggle('active');
+                    toggleBtn.classList.toggle('open');
+
+                    if (toggleBtn.classList.contains('open')) {
+                        navIcon.classList.remove('fa-bars');
+                        navIcon.classList.add('fa-xmark');
+                    } else {
+                        navIcon.classList.remove('fa-xmark');
+                        navIcon.classList.add('fa-bars');
+                    }
+                });
+            }
+
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+            dropdownToggles.forEach(toggle => {
+                const handleDropdownToggle = (e) => {
+                    if (window.innerWidth <= 600) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const parentLi = toggle.closest('.dropdown');
+                        const targetMenu = parentLi.querySelector('.dropdown-menu');
+
+                        parentLi.classList.toggle('active');
+
+                        const isHidden = window.getComputedStyle(targetMenu).display === 'none';
+                        targetMenu.style.display = isHidden ? 'flex' : 'none';
+                    }
+                };
+
+                toggle.addEventListener('touchstart', handleDropdownToggle, { passive: false });
+                toggle.addEventListener('click', handleDropdownToggle);
+            });
+
+            const observerOptions = { root: null, rootMargin: "0px", threshold: 0.1 };
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = "1";
+                        entry.target.style.transform = "translateY(0)";
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const animatedElements = document.querySelectorAll(".card, .map-placeholder, .hero-content h1, .hero-content p");
+            animatedElements.forEach(el => {
+                el.style.opacity = "0";
+                el.style.transform = "translateY(20px)";
+                el.style.transition = "opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)";
+                revealObserver.observe(el);
+            });
+
+            const heroSection = document.querySelector(".hero");
+            if (heroSection) {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                Object.assign(canvas.style, {
+                    position: "absolute", top: "0", left: "0", width: "100%", height: "100%",
+                    zIndex: "0", pointerEvents: "none"
+                });
+                heroSection.style.position = "relative";
+                heroSection.insertBefore(canvas, heroSection.firstChild);
+
+                let points = [];
+                let maxPoints = 110;
+                const maxDist = 165;
+                let mouse = { x: null, y: null, radius: 220 };
+
+                window.addEventListener("mousemove", (e) => {
+                    const rect = heroSection.getBoundingClientRect();
+                    mouse.x = e.clientX - rect.left;
+                    mouse.y = e.clientY - rect.top;
+                });
+
+                window.addEventListener("mouseleave", () => {
+                    mouse.x = null;
+                    mouse.y = null;
+                });
+
+                class MeshNode {
+                    constructor(startX, startY) {
+                        this.x = startX !== undefined ? startX : Math.random() * canvas.width;
+                        this.y = startY !== undefined ? startY : Math.random() * canvas.height;
+                        this.vx = (Math.random() - 0.5) * 0.16;
+                        this.vy = (Math.random() - 0.5) * 0.16;
+                        this.baseRadius = Math.random() * 1.5 + 0.8;
+                        this.radius = this.baseRadius;
+                        this.pulseFactor = Math.random() * Math.PI;
+                        this.depth = Math.random() * 0.5 + 0.3;
+                    }
+
+                    update() {
+                        this.x += this.vx;
+                        this.y += this.vy;
+
+                        if (this.x < 0) this.x = canvas.width;
+                        if (this.x > canvas.width) this.x = 0;
+                        if (this.y < 0) this.y = canvas.height;
+                        if (this.y > canvas.height) this.y = 0;
+
+                        this.pulseFactor += 0.012;
+                        this.radius = this.baseRadius + Math.sin(this.pulseFactor) * 0.3;
+
+                        if (mouse.x !== null && mouse.y !== null) {
+                            const dx = mouse.x - this.x;
+                            const dy = mouse.y - this.y;
+                            const distance = Math.hypot(dx, dy);
+
+                            if (distance < mouse.radius) {
+                                const force = (mouse.radius - distance) / mouse.radius;
+                                this.x -= (dx / distance) * force * 0.35;
+                                this.y -= (dy / distance) * force * 0.35;
+                            }
+                        }
+                    }
+
+                    draw() {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(34, 197, 94, ${this.depth * 0.5})`;
+                        ctx.fill();
+                    }
+                }
+
+                function resizeCanvas() {
+                    const oldWidth = canvas.width || heroSection.offsetWidth;
+                    const oldHeight = canvas.height || heroSection.offsetHeight;
+
+                    canvas.width = heroSection.offsetWidth;
+                    canvas.height = heroSection.offsetHeight;
+
+                    const targetPoints = Math.min(Math.floor((canvas.width * canvas.height) / 7500), maxPoints);
+
+                    if (points.length === 0) {
+                        for (let i = 0; i < targetPoints; i++) {
+                            points.push(new MeshNode());
+                        }
+                    } else {
+                        points.forEach(p => {
+                            p.x = (p.x / oldWidth) * canvas.width;
+                            p.y = (p.y / oldHeight) * canvas.height;
+                        });
+                        if (points.length < targetPoints) {
+                            while (points.length < targetPoints) points.push(new MeshNode());
+                        } else if (points.length > targetPoints) {
+                            points.splice(targetPoints);
+                        }
+                    }
+                }
+
+                window.addEventListener("resize", resizeCanvas);
+                resizeCanvas();
+
+                function animateMesh() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    for (let i = 0; i < points.length; i++) {
+                        points[i].update();
+                        points[i].draw();
+
+                        for (let j = i + 1; j < points.length; j++) {
+                            const dx = points[i].x - points[j].x;
+                            const dy = points[i].y - points[j].y;
+                            const dist = Math.hypot(dx, dy);
+
+                            if (dist < maxDist) {
+                                let alpha = (1 - dist / maxDist) * 0.13 * (points[i].depth * points[j].depth);
+
+                                if (mouse.x !== null && mouse.y !== null) {
+                                    const mDist1 = Math.hypot(mouse.x - points[i].x, mouse.y - points[i].y);
+                                    const mDist2 = Math.hypot(mouse.x - points[j].x, mouse.y - points[j].y);
+                                    if (mDist1 < mouse.radius || mDist2 < mouse.radius) {
+                                        alpha *= 2.0;
+                                    }
+                                }
+
+                                ctx.beginPath();
+                                ctx.moveTo(points[i].x, points[i].y);
+                                ctx.lineTo(points[j].x, points[j].y);
+                                ctx.strokeStyle = `rgba(34, 197, 94, ${alpha})`;
+                                ctx.lineWidth = dist < maxDist * 0.35 ? 0.8 : 0.4;
+                                ctx.stroke();
+
+                                if (Math.random() < 0.00025 && dist < maxDist * 0.6) {
+                                    ctx.beginPath();
+                                    const pct = (Date.now() % 1800) / 1800;
+                                    const px = points[i].x + dx * pct;
+                                    const py = points[i].y + dy * pct;
+                                    ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+                                    ctx.fillStyle = `rgba(34, 197, 94, ${points[i].depth})`;
+                                    ctx.fill();
+                                }
+                            }
+                        }
+                    }
+                    requestAnimationFrame(animateMesh);
+                }
+                animateMesh();
+            }
+
+            const topBtn = document.createElement("button");
+            topBtn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+            Object.assign(topBtn.style, {
+                position: "fixed", bottom: "30px", right: "30px", width: "45px", height: "45px",
+                backgroundColor: "#1a1c1e", color: "#22c55e", border: "1px solid #2a2d31",
+                borderRadius: "50%", cursor: "pointer", display: "none", zIndex: "2000",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.4)", transition: "all 0.3s ease"
+            });
+            document.body.appendChild(topBtn);
+
+            window.addEventListener("scroll", () => {
+                topBtn.style.display = window.scrollY > 400 ? "block" : "none";
+            });
+
+            topBtn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+            topBtn.addEventListener("mouseenter", () => {
+                topBtn.style.backgroundColor = "rgba(34, 197, 94, 0.1)";
+                topBtn.style.borderColor = "#22c55e";
+                topBtn.style.boxShadow = "0 0 15px rgba(34, 197, 94, 0.3)";
+            });
+            topBtn.addEventListener("mouseleave", () => {
+                topBtn.style.backgroundColor = "#1a1c1e";
+                topBtn.style.borderColor = "#2a2d31";
+                topBtn.style.boxShadow = "0 4px 12px rgba(0,0,0,0.4)";
+            });
+        });
+    </script>
+
+<body>
+    <header class="navbar">
+        <div class="container">
+            <a href="./" class="logo-brand">
+                <img src="./img/ncmesh_logo.png" alt="NC Mesh Logo" class="brand-img">
+                <span class="brand-text">NC<span>Mesh.net</span></span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation menu">
+                <i class="fa-solid fa-bars nav-icon-animate"></i>
+            </button>
+            <nav class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="devices.html">Hardware Glossary</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">Meshtastic <i
+                                class="fa-solid fa-chevron-down nav-arrow"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="meshtastic.html"><i class="fa-solid fa-circle-info"></i> Network Info</a></li>
+                            <li><a href="config-meshtastic.html"><i class="fa-solid fa-sliders"></i> Setup
+                                    Instructions</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">MeshCore <i
+                                class="fa-solid fa-chevron-down nav-arrow"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="meshcore.html"><i class="fa-solid fa-circle-info"></i> Network Info</a></li>
+                            <li><a href="config-meshcore.html"><i class="fa-solid fa-sliders"></i> Setup
+                                    Instructions</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Hardware Glossary</h1>
+            <p>A curated reference for LoRa nodes, repeaters, trackers, and base stations deployed within the North
+                Carolina mesh landscape. Always buy the 915 MHz US frequency variant.
+                <br>
+                <br>
+            <div class="grid-3">
+                <h3>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#Portable">Portable
+                            Nodes</a></div>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#Repeaters">Repeaters</a>
+                    </div>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#Antennas">Antennas</a>
+                    </div>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#Batteries">Batteries</a>
+                    </div>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#BMS">BMS</a></div>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#Panels">Solar Panels</a>
+                    </div>
+                    <div class="card-badge badge-primary" style="margin-right: 6px"><a href="#Boxs">Junction Boxs</a>
+                    </div>
+                </h3>
+            </div>
+            </p>
+        </div>
+    </section>
+    <div class="container guide-content">
+        <div class="alert-box alert-warning">
+            <div>
+                <i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i> <strong>Critical Frequency
+                    Warning:</strong> North Carolina builds operate strictly on the <strong>915 MHz (US) band</strong>.
+                Devices tuned to 868 MHz (EU) are incompatible and illegal to operate within this region.
+            </div>
+        </div>
+        <section class="hardware-section" id="Portable">
+            <h2>Portable Nodes</h2>
+            <div class="grid-3">
+                <!-- Seeedstudio T1000E  -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-primary">Best for <span>Beginners</span></div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/devices/t1000e.jpg" alt="Seeedstudio T1000E Device Display View">
+                    </div>
+                    <h3><span>Seeedstudio</span> T1000e</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $40</li>
+                        <li><strong>Use Case:</strong> Personal Device</li>
+                        <li><strong>Chipset:</strong> nRF52840 + LR1110</li>
+                        <li><strong>Display:</strong> None</li>
+                        <li><strong>Connectivity:</strong> GPS & Bluetooth</li>
+                        <li><strong>Battery:</strong> 700mAh</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">The most tried and true IP65 rated all in one mesh device.</p>
+                    <a href="https://www.seeedstudio.com/SenseCAP-Card-Tracker-T1000-E-for-Meshtastic-p-5913.html"
+                        target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+                <!-- Lilygo T-Echo -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-primary">Best for <span>Battery Life</span></div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/devices/techo.png" alt="LilyGo T-Echo Device Display View">
+                    </div>
+                    <h3><span>LilyGo</span> T-Echo</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $45 - $55</li>
+                        <li><strong>Use Case:</strong> Personal Tracker</li>
+                        <li><strong>Chipset:</strong> nRF52840 + SX1262</li>
+                        <li><strong>Display:</strong> 1.54" E-Ink (E-paper)</li>
+                        <li><strong>Connectivity:</strong> GPS, Bluetooth & NFC</li>
+                        <li><strong>Battery:</strong> 850mAh</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">Unmatched efficiency combining an ultra-low power nRF microchip with a passive
+                        electronic ink screen.</p>
+                    <a href="https://store.rokland.com/products/lilygo-ttgo-meshtastic-t-echo-white-lora-sx1262-wireless-module-915mhz-nrf52840-gps-for-arduino"
+                        target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+                <!-- Heltec V4-R8-EX -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-primary">Best <span>Standalone</span></div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/devices/V4-R8.png" alt="WiFi LoRa 32 V4-R8 View"
+                            style="width: 100%; max-width: 160px; height: auto; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3><span>Heltec</span> WiFi LoRa 32 V4-R8</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $66.90 – $69.90</li>
+                        <li><strong>Use Case:</strong> Standalone Terminal</li>
+                        <li><strong>Chipset:</strong> ESP32-S3R8 + SX1262</li>
+                        <li><strong>Display:</strong> Responsive TFT Touchscreen</li>
+                        <li><strong>Connectivity:</strong> GPS, Wi-Fi & Bluetooth</li>
+                        <li><strong>Battery:</strong> 2800mAh (Optional 18650)</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">The new upgraded V4 ecosystem variant loaded with 8MB PSRAM, 16MB Flash, SD
+                        card support and built-in full UI navigation controls.</p>
+                    <a href="https://heltec.org/project/v4-r8-ex/" target="_blank" class="btn btn-primary hardware-btn"
+                        style="margin-top: auto;"><i class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+            </div>
+        </section>
+        <section class="hardware-section" id="Repeaters">
+            <h2>Base Stations & Repeater Infrastructure</h2>
+            <div class="grid-3">
+                <!-- Station G3  -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-danger">Maximum ERP Base Station</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/devices/stationg3.png" alt="Station G3 Base Station Display View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3><span>Station G3</span> Base Station</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $109</li>
+                        <li><strong>Use Case:</strong> Fixed Infrastructure</li>
+                        <li><strong>Output Power:</strong> 36.5dBm (4.5W max)</li>
+                        <li><strong>Architecture:</strong> ESP32-S3 + SX1262 + PA + LNA</li>
+                        <li><strong>Connectivity:</strong> Wi-Fi & Bluetooth</li>
+                        <li><strong>Power Input:</strong> 15V USB-C PD / 9-19V Ext</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">High-performance fixed asset output engine paired with an ultra-low noise
+                        amplifier for maximizing wide-area mountain repeater setups or a bulletproof home base repeater.
+                    </p>
+                    <a href="https://store.bqvoy.com/product/mesh-device-station-edition/" target="_blank"
+                        class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- RAK WisBlock -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-secondary">Configurable Solar Node</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/devices/rakwisblock.png" alt="RAK WisBlock Solar Module Core Display View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3><span>RAK WisBlock</span> Modular System</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $35</li>
+                        <li><strong>Use Case:</strong> Rooftop Solar Home Repeater Or Mountain Top</li>
+                        <li><strong>Chipset:</strong> nRF52840 + SX1262</li>
+                        <li><strong>Display:</strong> Modular (Optional)</li>
+                        <li><strong>Solar Ready:</strong> Integrated 5V MPPT Charger</li>
+                        <li><strong>Current Draw:</strong> Micro-amps Standby</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">The gold standard framework for permanent mountaintop or home base solar
+                        repeater projects.
+                        Draws nominal micro-amps in standby mode without active cooling setups.</p>
+                    <a href="https://store.rokland.com/products/rak-wireless-wisblock-meshtastic-starter-kit?variant=40074367860819&country=US&currency=USD"
+                        target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- Heltec v3 -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-secondary">Configurable Solar Node</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/devices/heltecv3.png" alt="Heltec v3 dev board View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3><span>Heltec</span> v3</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $17.90 – $19.90</li>
+                        <li><strong>Use Case:</strong> Rooftop Solar Home Repeater Or Mountain Top</li>
+                        <li><strong>Chipset:</strong> ESP32-S3FN8 + SX1262</li>
+                        <li><strong>Power Options:</strong> Battery</li>
+                        <li><strong>Deployment:</strong> Outdoor Mast Mounted with Junction Box</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">Third generation heltec board. Tried and true to work in the worst of
+                        conditions. Does not have an LNA like the v4
+                        but depending on noise floor; it may perform better than the v4 in noisy environments.
+                        <br><br>
+                        <i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i> Please note that ESP32
+                        powered nodes take much more battery power than their NRF counterparts!
+                    </p>
+                    </p>
+                    <a href="https://heltec.org/project/wifi-lora-32-v3/" target="_blank"
+                        class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- Heltec v4 -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-secondary">Configurable Solar Node</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/devices/heltecv4.png" alt="Heltec v4 dev board View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3><span>Heltec</span> v4</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $17.90 – $27.50</li>
+                        <li><strong>Use Case:</strong> Home Base Repeater</li>
+                        <li><strong>Chipset:</strong> ESP32-S3R8 + SX1262 + LNA</li>
+                        <li><strong>Power Options:</strong> Battery, Solar, or USB</li>
+                        <li><strong>Deployment:</strong> Indoor Window or Outdoor Mast Mounted with Junction Box</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">The Heltec v4.3 is an ESP32 powerhouse. With a Low noise amplifier
+                        and wifi, bluetooth or serial connectivity; you can use it with any device!
+                        <br><br>
+                        <i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i> Please note that ESP32
+                        powered nodes take much more battery power than their NRF counterparts!
+                    </p>
+                    <a href="https://heltec.org/project/wifi-lora-32-v4/" target="_blank"
+                        class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- Heltec T096 -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-warning">Configurable Node</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/devices/heltect096.png" alt="Heltec T096 dev board View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3><span>Heltec</span> T096</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $34</li>
+                        <li><strong>Use Case:</strong> Home Base Repeater or Mountaintop</li>
+                        <li><strong>Chipset:</strong> nRF52840 + SX1262 + LNA</li>
+                        <li><strong>Power Options:</strong> Battery or USB</li>
+                        <li><strong>Deployment:</strong> Indoor Window or Outdoor Mast Mounted with Junction Box</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">Tiny board with a ton of features! Includes GPS, GLONASS, BDS (BeiDou),
+                        Galileo, NAVIC, QZSS and Bluetooth.
+                        Has a Integrated lithium battery management system.
+                    </p>
+                    <a href="https://heltec.org/project/t096/" target="_blank" class="btn btn-primary hardware-btn"
+                        style="margin-top: auto;"><i class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- SenseCAP Solar Node -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-primary">Prebuilt <span>Solar Node</span></div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/devices/sensecap-solar.png" alt="SenseCAP Solar Node P1-Pro Enclosure View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3><span>SenseCAP</span> Solar Node</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $101</li>
+                        <li><strong>Use Case:</strong> Prebuilt Solar Infrastructure</li>
+                        <li><strong>Enclosure:</strong> IP66 Weatherproof Rated</li>
+                        <li><strong>Power Options:</strong> Solar Panel Input + Batt</li>
+                        <li><strong>Sensor Hub:</strong> RS485 Interface Ready</li>
+                        <li><strong>Deployment:</strong> Outdoor Mast Mounted</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">An all-in-one weatherproof outdoor node solution designed for easy install and
+                        usage right out of the box!</p>
+                    <a href="https://www.seeedstudio.com/SenseCAP-Solar-Node-P1-Pro-for-Meshtastic-LoRa-p-6412.html"
+                        target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+            </div>
+        </section>
+        <section class="hardware-section" id="Antennas">
+            <h2>Antennas</h2>
+            <div class="grid-3">
+
+                <!-- Muzi Whip -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-primary">Handheld Upgrade</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/antennas/muzi-whip.png" alt="Muzi Whip 17cm Antenna View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>Muzi Whip 17cm</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $12</li>
+                        <li><strong>Form Factor:</strong> Flexible Whip</li>
+                        <li><strong>Frequency:</strong> 915 MHz</li>
+                        <li><strong>SWR Rating:</strong> ~1.3 Efficiency</li>
+                        <li><strong>Gain Metrics:</strong> 2.15 dBi Omni-directional</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">Handheld replacement offering an optimized SWR 1.3 efficiency level over stock
+                        omni variants.</p>
+                    <a href="https://muzi.works/products/whip-antenna-17cm" target="_blank"
+                        class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- MESHTAC Gooseneck -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-primary">Tactical Flex</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/antennas/MESHTAC-gooseneck.png" alt="MESHTAC Gooseneck Antenna View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>MESHTAC Gooseneck</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $35</li>
+                        <li><strong>Form Factor:</strong> Heavy Steel Gooseneck</li>
+                        <li><strong>Frequency:</strong> 915 MHz</li>
+                        <li><strong>Gain Metrics:</strong> 4 dBi Omni-directional</li>
+                        <li><strong>Durability:</strong> Ruggedized Metallic Shell</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">Tactical flexible heavy-duty antenna delivering a clear signals in harsh
+                        conditions.
+                    </p>
+                    <a href="https://store.rokland.com/products/meshtac-gooseneck-tactical-antenna-4-dbi-gain-sma-male-915-mhz-flexible-for-meshtastic-lora?_pos=1"
+                        target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- RAK 5.8 dBi -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-warning">Omni-directional Link</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/antennas/Rokland-5.8dbi.png" alt="RAK 5.8 dBi Fiberglass Antenna View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>RAK 5.8 dBi Fiberglass</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $43</li>
+                        <li><strong>Form Factor:</strong> Rigid Outdoor Rod</li>
+                        <li><strong>Frequency:</strong> 902 - 928 MHz</li>
+                        <li><strong>Gain Metrics:</strong> 5.8 dBi Omni-directional</li>
+                        <li><strong>Hardware:</strong> Included Mounting Brackets</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">Weatherproof outdoor omni-directional rod meant for rooftops or high altitude
+                        mountaintop
+                        repeater structures.</p>
+                    <a href="https://store.rokland.com/products/5-8-dbi-n-male-omni-outdoor-915-mhz-antenna-large-profile-32-height-for-helium-rak-miner-2-nebra-indoor-bobcat?_pos=1&_sid=ee76f9969&_ss=r"
+                        target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- Slinkdsco 5.8 dBi -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-warning">Omni-directional Link</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/antennas/slinkdsco.png" alt="Slinkdsco 5.8dBi Antenna View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>Slinkdsco 5.8 dBi</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $36</li>
+                        <li><strong>Form Factor:</strong> 16.2" Heavy Duty Rigid Omni</li>
+                        <li><strong>Frequency:</strong> 915 MHz</li>
+                        <li><strong>Gain Metrics:</strong> 5.8 dBi Omni-directional</li>
+                        <li><strong>Hardware:</strong> Included Mounting Brackets</li>
+                        <li><strong>Connector:</strong> N-Type Male</li>
+                        <li><strong>Use Case:</strong> Enclosure Bulkhead Mount (IPEX/U.FL to NType Adapter Included)
+                        </li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">A weatherproof 16-inch antenna designed for direct connection to
+                        outdoor project node enclosures without extended coaxial cable loss.</p>
+                    <a href="https://www.amazon.com/dp/B0GBSTPHKG" target="_blank" class="btn btn-primary hardware-btn"
+                        style="margin-top: auto;"><i class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- Rokland Backcountry 10 dBi -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-danger">Mountain Repeater</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/antennas/Rokland-10dbi.png" alt="Rokland Backcountry 10 dBi Antenna View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>Rokland Backcountry 10dBi</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $50</li>
+                        <li><strong>Form Factor:</strong> 45" Extended Mast Rod</li>
+                        <li><strong>Frequency:</strong> 915 MHz</li>
+                        <li><strong>Gain Metrics:</strong> 10 dBi</li>
+                        <li><strong>Hardware:</strong> Included Mounting Brackets</li>
+                        <li><strong>Connector:</strong> N-Type Male</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">High-gain 45-inch fiberglass omni built for long-range connectivity
+                        in rural mountain sites.</p>
+                    <a href="https://store.rokland.com/products/10-dbi-backcountry-n-male-omni-outdoor-helium-915-mhz-antenna-48-for-rak-miner-2-nebra-indoor-bobcat-hotspots"
+                        target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- ALFA AYA-9012 Yagi -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-danger">Directional Link</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/antennas/alfa-yagi.png" alt="ALFA AYA-9012 Yagi Antenna View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>ALFA 12 dBi Yagi (AYA-9012)</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $68</li>
+                        <li><strong>Form Factor:</strong> Multi-Element Boom Array</li>
+                        <li><strong>Frequency:</strong> 915 MHz Narrow Beam</li>
+                        <li><strong>Gain Metrics:</strong> 12 dBi Point-to-Point</li>
+                        <li><strong>Hardware:</strong> Included Mounting Brackets</li>
+                        <li><strong>Connector:</strong> N-Female Interface Block</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text">Premium directional antenna engineered for establishing stable point-to-point
+                        backbone infrastructure links.</p>
+                    <a href="https://store.rokland.com/products/12-dbi-aya-9012-alfa-network-n-female-directional-yagi-outdoor-iot-915-mhz-antenna"
+                        target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+            </div>
+        </section>
+        <section class="hardware-section warning-block" id="Batteries">
+            <h2>Batteries</h2>
+            <h3><i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i> Counterfeit Lithium Cell Alert
+            </h3>
+            <p>Avoid third-party marketplace vendors when sourcing standard 18650 or 21700 lithium cells.
+                These generic units frequently advertise false capacity ratings, lack essential internal thermal
+                protection, and present severe fire or ignition risks. To protect your hardware, purchase authenticated
+                cells exclusively through certified suppliers like <span><a href="https://18650batterystore.com">18650
+                        Battery Store</a></span>,
+                <span><a href="https://imrbatteries.com">IMR Batteries</a></span>, or <span><a
+                        href="https://rokland.com">Rokland</a></span>.
+            </p>
+        </section>
+        <section class="hardware-section">
+            <div class="grid-3">
+
+                <!-- Panasonic 3300 18650 -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-danger">18560</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/batteries/panasonic.png" alt="Panasonic 3300 18650 View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>Panasonic 18650</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $14 (+30% Hazmat)</li>
+                        <li><strong>Capacity:</strong> 3300mAh</li>
+                        <li><strong>Quantity:</strong> 2</li>
+                        <li><strong>Voltages:</strong><br> 3.6v Nominal - 4.2v Maximum </li>
+                        <li><strong>Operating Temperature:</strong><br> -20°C - +60°C</li>
+                        <li><strong>Charging Temperature:</strong><br> +10°C - +45°C</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text"><i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i> This
+                        item ships with a 30% hazmat fee for ground shipping.
+                        This product also <b>requires</b> a BMS (Battery Management System) for safe charging and
+                        operation.</p>
+                    <a href="https://store.rokland.com/collections/batteries/products/sanyo-ncr18650ga-3450mah-10a-battery-lilygo-ttgo-meshtastic-t-beam?variant=41218703622227"
+                        target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- Molicel INR-21700-P42A -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-primary">21700</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/batteries/molicel21700.png" alt="Molicel INR-21700-P42A View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>Molicel INR-21700-P42A</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $12 (+30% Hazmat)</li>
+                        <li><strong>Capacity:</strong> 4200mAh</li>
+                        <li><strong>Quantity:</strong> 2</li>
+                        <li><strong>Voltages:</strong><br> 3.6v Nominal - 4.2v Maximum </li>
+                        <li><strong>Operating Temperature:</strong><br> -40°C - +60°C</li>
+                        <li><strong>Charging Temperature:</strong><br> -20°C - +60°C</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text"><i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i> This
+                        item ships with a 30% hazmat fee for ground shipping.
+                        This product also <b>requires</b> a BMS (Battery Management System) for safe charging and
+                        operation.</p>
+                    <a href="https://store.rokland.com/collections/batteries/products/molicel-21700-p42a-4200mah-45a-battery"
+                        target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- MakerFocus Flat 3.7V -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-warning">Pouch</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/batteries/makerfocus.png" alt="MakerFocus Flat 3.7V View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>MakerFocus Flat 3.7V</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $12 (+30% Hazmat)</li>
+                        <li><strong>Capacity:</strong> 3000mAh</li>
+                        <li><strong>Quantity:</strong> 1</li>
+                        <li><strong>Connector:</strong> JST Type PH 2.0</li>
+                        <li><strong>Voltages:</strong><br> 3.6v Nominal - 4.2v Maximum </li>
+                        <li><strong>Operating Temperature:</strong><br> -10°C - +60°C</li>
+                        <li><strong>Charging Temperature:</strong><br> 0°C - +45°C</li>
+                    </ul>
+                    <br>
+                    <p class="desc-text"><i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i> This
+                        item ships with a 30% hazmat fee for ground shipping.</p>
+                    <a href="https://store.rokland.com/collections/batteries/products/makerfocus-flat-3-7v-3000mah-rechargeable-lithium-polymer-11-1wh-battery-with-jst-type-ph-2-0-plug?variant=43445176303699"
+                        target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="hardware-section warning-block" id="BMS">
+            <h2>Battery Management Systems</h2>
+            <h3><i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i> Compatibility Warning
+            </h3>
+            <p>
+                Please ensure that the Battery Management System you intend to purchase matches the type of battery
+                chemistry you are going to use!<br><br>
+                Failure to use the same type as the batteries you are using will cause: <br>
+            <ul style="padding-left: 20px;">
+                <li>Hardware Failure</li>
+                <li>Dangerous Thermal Runaway or Fire Hazards</li>
+                <li>Severe Battery Cell Degradation and Permanent Capacity Loss</li>
+                <li>Inaccurate State-of-Charge (SoC) and Voltage Readings</li>
+                <li>Premature Overvoltage or Undervoltage Cutoffs</li>
+            </ul>
+            </p>
+
+        </section>
+        <section class="hardware-section">
+            <div class="grid-3">
+
+                <!-- WatangTech MPPT Solar Charge Controller for 18650 Li-ion Battery -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-danger">Li-ion</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/bms/watangtech.png" alt="WatangTech MPPT View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>WatangTech 18650 MPPT Solar Controller</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $16</li>
+                        <li><strong>Capacity:</strong> 1x 18650 Li-ion</li>
+                        <li><strong>Input Voltages:</strong> 5V - 24V DC</li><br>
+                        <i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i> The solar panel input
+                        and USB TYPE-C input cannot charge the battery at the same time!<br><br>
+                        <li><strong>Output Voltages:</strong> USB 5V-2A USB + 5V-2A / 3.3V-1A 2.54mm Headers </li>
+                        <li><strong>Expansion:</strong><br> PH-2P 2.0 for external 3.7V Li battery/pack expansion</li>
+                        <li><strong>Extras:</strong><br> Compatible with Raspberry Pi 3/4/5 mounting holes</li>
+                    </ul>
+                    <br>
+                    <a href="https://www.amazon.com/dp/B0G2KSZ7HX" target="_blank" class="btn btn-primary hardware-btn"
+                        style="margin-top: auto;"><i class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- WAITRIP Li-ion 18650 Battery Charger TP4056 -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-danger">Li-ion</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/bms/aitrip.png" alt="WAITRIP Li-ion 18650 Battery Charger TP4056 View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>WAITRIP 18650 Battery Charger TP4056</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $7</li>
+                        <li><strong>Quantity:</strong> 5</li>
+                        <li><strong>Input Voltages:</strong> 4.5 - 8V DC</li>
+                        <li><strong>Output Voltages:</strong> 4.3 - 27V DC </li>
+                        <li><strong>Operating Temperature:</strong><br> -20°C - +60°C</li>
+                        <li><strong>Charging Temperature:</strong><br> 0°C - +45°C</li>
+                    </ul>
+                    <br>
+                    <a href="https://www.amazon.com/dp/B0F7X3GDVS" target="_blank" class="btn btn-primary hardware-btn"
+                        style="margin-top: auto;"><i class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- Voltaic Systems v75 -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-danger">LI-ION</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/bms/voltaic.png" alt="Voltaic Systems v75 View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>Voltaic Systems v75</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $89</li>
+                        <li><strong>Capacity:</strong> 20,100mAh</li>
+                        <li><strong>Input Connector:</strong> 3.5x1.1mm Solar Input Port + USB-C</li>
+                        <li><strong>Output Connector:</strong> USB-A + USB-C</li>
+                        <li><strong>Input Voltages:</strong> USB-C Solar OR 3.5x1.1mm Solar Input Port at 5-6V/2A</li>
+                        <li><strong>Output Voltages:</strong> 4.3 - 27V DC </li>
+                        <li><strong>Operating Temperature:</strong><br> -15°C - +60°C</li>
+                        <li><strong>Charging Temperature:</strong><br> 0°C - +45°C</li>
+                        <li><strong>Extras:</strong> Always On Mode for USB ports</li>
+                    </ul>
+                    <br>
+                    <a href="https://voltaicsystems.com/v75" target="_blank" class="btn btn-primary hardware-btn"
+                        style="margin-top: auto;"><i class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+            </div>
+        </section>
+        <section class="hardware-section warning-block" id="Panels">
+            <h2>Solar Panels</h2>
+            <h3><i class="fa-solid fa-triangle-exclamation" style="color: yellow;"></i> Compatibility Warning
+            </h3>
+            <p>
+                Please ensure that your solar panel's open-circuit voltage (Voc) is safely
+                within the operating specifications of your BMS!<br><br>
+                Failure to do so can cause: <br>
+            <ul style="padding-left: 20px;">
+                <li>Permanent BMS hardware failure</li>
+                <li>Catastrophic overcharging, leading to thermal runaway or fire hazards</li>
+                <li>Severe battery cell degradation and permanent capacity loss</li>
+                <li>Loss of critical overvoltage protection mechanisms</li>
+            </ul>
+            </p>
+        </section>
+        <section class="hardware-section">
+            <div class="grid-3">
+
+                <!-- Soshine Mini Solar Panel  -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-danger">USB-A</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/panels/soshine.png" alt="Soshine Mini Solar Panel View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>Soshine Mini Solar Panel</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $15</li>
+                        <li><strong>Type:</strong> Monocrystalline</li>
+                        <li><strong>Output Voltages:</strong> 5V/1A 6 Watts</li>
+                        <li><strong>Output Ports:</strong> USB A</li>
+                    </ul>
+                    <br>
+                    <a href="https://www.amazon.com/dp/B099RSLNZ4" target="_blank" class="btn btn-primary hardware-btn"
+                        style="margin-top: auto;"><i class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- Voltaic Systems 20 Watt 6 Volt ETFE Solar Panel  -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-secondary">3.5x1.1mm</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/panels/voltaic.png" alt="Voltaic Systems 20 Watt View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>Voltaic Systems Solar Panel</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $99.00</li>
+                        <li><strong>Type:</strong> High-Efficiency Monocrystalline</li>
+                        <li><strong>Output Voltages:</strong> 5.21V / 4.46A (23.21W Peak)</li>
+                        <li><strong>Output Ports:</strong> Waterproof Male 3.5x1.1mm Plug</li>
+                    </ul>
+
+                    <br>
+                    <a href="https://www.amazon.com/dp/B099RSLNZ4" target="_blank" class="btn btn-primary hardware-btn"
+                        style="margin-top: auto;"><i class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+                <!-- Rakwireless Solar Panel  -->
+                <div class="card hardware-card">
+                    <div class="card-badge badge-warning">JST 1.5</div>
+                    <div style="text-align: center; margin: 15px 0 10px 0;">
+                        <img src="./img/panels/rak.png" alt="Rakwireless Solar Panel View"
+                            style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                    </div>
+                    <h3>RAKwireless Solar Panel</h3>
+                    <ul class="spec-list">
+                        <li><strong>Price:</strong> $12.00</li>
+                        <li><strong>Type:</strong> Monocrystalline</li>
+                        <li><strong>Output Voltages:</strong> 5V/90mA 0.45 Watts</li>
+                        <li><strong>Output Ports:</strong> 10cm Cable with JST 1.5mm Plug</li>
+                    </ul>
+                    <br>
+                    <a href="https://store.rokland.com/products/rak-solar-panels-920399?variant=41817151766611&country=US&currency=USD"
+                        target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                            class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                </div>
+
+            </div>
+
+            <section class="hardware-section warning-block" id="Boxs">
+                <h2>Junction Boxes</h2>
+            </section>
+            <section class="hardware-section">
+                <div class="grid-3">
+
+                    <!-- Ticonn box small -->
+                    <div class="card hardware-card">
+                        <div class="card-badge badge-danger">Small</div>
+                        <div style="text-align: center; margin: 15px 0 10px 0;">
+                            <img src="./img/boxs/ticonn-small.png" alt="Ticonn box small View"
+                                style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                        </div>
+                        <h3>Ticonn Small Box</h3>
+                        <ul class="spec-list">
+                            <li><strong>Price:</strong> $20</li>
+                            <li><strong>IP Rating:</strong> IP67</li>
+                            <li><strong>Dimensions:</strong> 5.9"x5.9"x3.5"</li>
+                            <li><strong>Color:</strong> Off-White</li>
+                        </ul>
+                        <br>
+                        <a href="https://www.amazon.com/TICONN-Waterproof-Electrical-Junction-Enclosure/dp/B0B87VR84G"
+                            target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                                class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                    </div>
+
+                    <!-- Ticonn box medium -->
+                    <div class="card hardware-card">
+                        <div class="card-badge badge-secondary">Medium</div>
+                        <div style="text-align: center; margin: 15px 0 10px 0;">
+                            <img src="./img/boxs/ticonn-medium.png" alt="Ticonn box small View"
+                                style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                        </div>
+                        <h3>Ticonn Medium Box</h3>
+                        <ul class="spec-list">
+                            <li><strong>Price:</strong> $25</li>
+                            <li><strong>IP Rating:</strong> IP67</li>
+                            <li><strong>Dimensions:</strong> 8.7"x6.7"x4.3"</li>
+                            <li><strong>Color:</strong> Off-White</li>
+                        </ul>
+                        <br>
+                        <a href="https://www.amazon.com/TICONN-Waterproof-Electrical-Junction-Enclosure/dp/B0B87X944Z"
+                            target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                                class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                    </div>
+
+                    <!-- Ticonn box large -->
+                    <div class="card hardware-card">
+                        <div class="card-badge badge-warning">Large</div>
+                        <div style="text-align: center; margin: 15px 0 10px 0;">
+                            <img src="./img/boxs/ticonn-large.png" alt="Ticonn box small View"
+                                style="width: 100%; max-width: 160px; height: 160px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                        </div>
+                        <h3>Ticonn Large Box</h3>
+                        <ul class="spec-list">
+                            <li><strong>Price:</strong> $37</li>
+                            <li><strong>IP Rating:</strong> IP67</li>
+                            <li><strong>Dimensions:</strong> 11"x7.5"x5.5"</li>
+                            <li><strong>Color:</strong> Off-White</li>
+                        </ul>
+                        <br>
+                        <a href="https://www.amazon.com/TICONN-Waterproof-Electrical-Junction-Enclosure/dp/B0B87VGV62"
+                            target="_blank" class="btn btn-primary hardware-btn" style="margin-top: auto;"><i
+                                class="fa-solid fa-cart-shopping"></i> Purchase Unit</a>
+                    </div>
+
+                </div>
+            </section>
+        </section>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 NC<span>Mesh</span>. Powered by the community.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
