@@ -16,7 +16,7 @@ Whether you are a seasoned frontend developer, a UI/UX designer, or a Meshtastic
 | :---: | :--- | :--- |
 | ✅ | **UI/UX Design** | Crafting a clean, mobile-responsive layout for mapping nodes and hardware guides. |
 | ✅ | **Frontend Development** | Setting up a scalable, modern project structure. |
-| 📌 | **Content Writing** | Creating easy-to-follow setup guides for flashing firmware, configuring companions/clients and configuring repeaters/routers.  |
+| ✅ | **Content Writing** | Creating easy-to-follow setup guides for flashing firmware, configuring companions/clients and configuring repeaters/routers.  |
 | 📌 | **Videos / Set-up Clips** | Instructional videos for flashing and configuring will be greatly appreciated. |
 
 ---
